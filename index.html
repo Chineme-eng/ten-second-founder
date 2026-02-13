@@ -82,6 +82,8 @@
             flex-direction: column;
             gap: 25px;
             flex-shrink: 0;
+            position: relative;
+            z-index: 2;
         }
 
         .brand-header {
@@ -134,6 +136,7 @@
         #story-log {
             flex-grow: 1;
             padding: 40px;
+            padding-bottom: 80px; /* Space for ticker */
             overflow-y: auto;
             scroll-behavior: smooth;
             display: flex;
@@ -184,7 +187,7 @@
             transform: translateY(-2px);
             box-shadow: 0 10px 20px -10px rgba(0,0,0,0.5);
         }
-        .choice-btn:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); }
+        .choice-btn:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); pointer-events: none; }
 
         .choice-title { font-weight: 600; font-size: 0.95rem; }
         .choice-meta { font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-mono); }
@@ -217,11 +220,54 @@
         }
         .start-btn:hover { transform: scale(1.05); background: #9333ea; }
 
+        /* --- FLOATING STAT POPUPS (JUICE) --- */
+        .floaty {
+            position: absolute;
+            font-weight: bold;
+            font-family: var(--font-mono);
+            pointer-events: none;
+            animation: floatUp 1.5s forwards ease-out;
+            z-index: 9999;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            font-size: 1.2rem;
+        }
+        @keyframes floatUp {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-40px) scale(1.2); }
+        }
+
+        /* --- NEWS TICKER --- */
+        .news-ticker {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 30px;
+            background: var(--bg-color);
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            z-index: 5;
+        }
+        .ticker-content {
+            white-space: nowrap;
+            animation: ticker 30s linear infinite;
+            padding-left: 100%;
+        }
+        @keyframes ticker {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             #app-container { flex-direction: column; height: 100vh; border-radius: 0; max-width: 100%; border: none; }
             .sidebar { width: 100%; padding: 15px; border-right: none; border-bottom: 1px solid var(--border); flex-direction: row; flex-wrap: wrap; gap: 15px; }
-            .sidebar .trait-list { display: none; } /* Hide traits on mobile to save space */
+            .sidebar .trait-list { display: none; }
             .choice-grid { grid-template-columns: 1fr; }
             #story-log { padding: 20px; }
         }
@@ -269,14 +315,18 @@
                 <span class="stat-value" id="ui-equity">100%</span>
             </div>
 
-            <div class="trait-list" id="ui-traits">
-                </div>
+            <div class="trait-list" id="ui-traits"></div>
         </div>
 
         <div class="main-view">
             <button class="theme-toggle" onclick="toggleTheme()">☀/☾</button>
-            <div id="story-log">
+            <div id="story-log"></div>
+            
+            <div class="news-ticker">
+                <div class="ticker-content">
+                    BREAKING: OpenAI announces GPT-5... // Y Combinator applications open... // Crypto market crashes again... // Picao AI trending on Twitter... // Apple Vision Pro sold out... // TechCrunch: "Is the Context Tax real?"...
                 </div>
+            </div>
         </div>
     </div>
 
@@ -398,22 +448,22 @@
             end_ipo: {
                 title: "EXIT: IPO",
                 text: "You rang the bell at NASDAQ. Picao AI is a public company worth $1B. You are rich, tired, and legendary.",
-                end: true, score: "S"
+                end: true
             },
             end_indie: {
                 title: "EXIT: LIFESTYLE BUSINESS",
                 text: "You own 100% of a business making $1M/year profit. You work 20 hours a week. Total freedom.",
-                end: true, score: "A"
+                end: true
             },
             end_bankrupt: {
                 title: "GAME OVER: BANKRUPT",
                 text: "You ran out of cash. The servers shut down. It was a good dream, but the market didn't care.",
-                end: true, score: "F"
+                end: true
             },
             end_burnout: {
                 title: "GAME OVER: COLLAPSE",
                 text: "The stress was too much. You had a breakdown and were forced to step down. The company failed without you.",
-                end: true, score: "D"
+                end: true
             }
         };
 
@@ -445,7 +495,27 @@
             let choicesHTML = '';
             
             if (node.end) {
-                choicesHTML = `<button class="choice-btn" onclick="location.reload()"><div class="choice-title">RESTART SIMULATION</div></button>`;
+                // Grading System
+                let score = 'C';
+                let netWorth = state.valuation * (state.equity / 100);
+                if (netWorth > 100000000) score = 'S';
+                else if (netWorth > 10000000) score = 'A';
+                else if (netWorth > 1000000) score = 'B';
+                else if (state.cash <= 0) score = 'F';
+
+                choicesHTML = `
+                    <div style="background: var(--accent-dim); padding: 30px; border-radius: 12px; border: 1px solid var(--accent); text-align: center; margin-bottom: 20px;">
+                        <div style="font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase; color: var(--text-muted);">Final Founder Grade</div>
+                        <div style="font-size: 4rem; font-weight: 800; color: var(--accent); margin: 10px 0;">${score}</div>
+                        <div style="font-family: var(--font-mono); margin-bottom: 20px;">
+                            Net Worth: <span style="color: var(--text-main)">${formatMoney(netWorth)}</span><br>
+                            Sanity Retained: ${state.sanity}%
+                        </div>
+                    </div>
+                    <button class="choice-btn" onclick="location.reload()">
+                        <div class="choice-title" style="text-align: center; width: 100%">INITIALIZE NEW STARTUP</div>
+                    </button>
+                `;
             } else {
                 choicesHTML = `<div class="choice-grid ${node.options.length === 1 ? 'single' : ''}">` + 
                 node.options.map((opt, index) => {
@@ -478,9 +548,6 @@
 
         // --- HTML-AWARE TYPEWRITER ---
         function typeWriterHTML(element, htmlString) {
-            // This function types text content but inserts HTML tags instantly
-            // To simplify: we will use a regex to find tags
-            
             let i = 0;
             let isTag = false;
             let currentText = "";
@@ -496,12 +563,12 @@
                     currentText += char;
                     if (char === '>') isTag = false;
                     i++;
-                    type(); // Don't delay for tags
+                    type(); 
                 } else {
                     currentText += char;
                     element.innerHTML = currentText;
                     i++;
-                    setTimeout(type, 15); // Typing speed
+                    setTimeout(type, 15);
                 }
             }
             type();
@@ -513,7 +580,11 @@
             
             // Remove buttons from previous node (freeze state)
             const buttons = document.querySelectorAll('.choice-btn');
-            buttons.forEach(b => b.classList.add('disabled')); // CSS pointer-events none
+            buttons.forEach(b => {
+                b.disabled = true;
+                b.style.opacity = '0.5';
+                b.style.cursor = 'default';
+            });
 
             // Handle Chance
             let nextKey = opt.next;
@@ -524,8 +595,14 @@
 
             // Apply Effects
             if (opt.effect) {
-                if (opt.effect.cash) state.cash += opt.effect.cash;
-                if (opt.effect.sanity) state.sanity += opt.effect.sanity;
+                if (opt.effect.cash) {
+                    state.cash += opt.effect.cash;
+                    showFloaty((opt.effect.cash > 0 ? '+' : '') + formatMoney(opt.effect.cash), opt.effect.cash > 0 ? 'good' : 'bad');
+                }
+                if (opt.effect.sanity) {
+                    state.sanity += opt.effect.sanity;
+                    showFloaty((opt.effect.sanity > 0 ? '+' : '') + opt.effect.sanity + '% Sanity', opt.effect.sanity > 0 ? 'good' : 'bad');
+                }
                 if (opt.effect.equity) state.equity += opt.effect.equity;
                 if (opt.effect.val) state.valuation = opt.effect.val;
                 if (opt.effect.week) state.week += opt.effect.week;
@@ -545,11 +622,30 @@
             } else if (state.cash < 0 && state.valuation > 0) {
                 pushStory('end_bankrupt');
             } else if (state.week >= config.maxWeeks) {
-                // Time run out logic could go here, for now simpler
                 pushStory('end_bankrupt'); 
             } else {
                 setTimeout(() => pushStory(nextKey), 400);
             }
+        }
+
+        function showFloaty(text, type) {
+            const el = document.createElement('div');
+            el.className = 'floaty';
+            el.innerText = text;
+            
+            const sidebar = document.querySelector('.sidebar');
+            const rect = sidebar.getBoundingClientRect();
+            
+            // Position near sidebar
+            el.style.left = (rect.right + 20) + 'px';
+            el.style.top = (rect.top + 150 + Math.random() * 100) + 'px';
+            
+            if (type === 'good') el.style.color = 'var(--success)';
+            if (type === 'bad') el.style.color = 'var(--danger)';
+            if (type === 'neutral') el.style.color = 'var(--text-main)';
+
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 1500);
         }
 
         function addTrait(traitName) {
