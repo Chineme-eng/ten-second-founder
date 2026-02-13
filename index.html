@@ -3,24 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Picao AI: The Founder's Journey</title>
+    <title>Picao AI: The Unified Workspace Simulator</title>
     <style>
-        /* Core Picao AI Palette */
+        /* Official Picao AI Palette & Variables */
         :root { 
-    --accent: #a855f7; /* Picao AI Purple */
-    --accent-glow: rgba(168, 85, 247, 0.4); /* Matching Purple Glow */
-    --bg-dark: #09090b; 
-    --card-dark: #18181b; 
-    --border-light: #27272a; 
-    --text-main: #fafafa; 
-    --text-muted: #a1a1aa;
-    --locked-bg: #121214;
-    --danger: #ef4444;
-    --success: #10b981;
-}
+            --accent: #a855f7; /* Picao AI Purple */
+            --accent-glow: rgba(168, 85, 247, 0.4); 
+            --accent-dim: rgba(168, 85, 247, 0.1);
+            --bg-dark: #050505; 
+            --card-dark: rgba(24, 24, 27, 0.65); /* Glassmorphism Base */
+            --border-light: rgba(255, 255, 255, 0.08); 
+            --text-main: #fafafa; 
+            --text-muted: #a1a1aa;
+            --locked-bg: rgba(18, 18, 20, 0.8);
+            --danger: #ef4444;
+            --success: #10b981;
+        }
+        
         body { 
-            background: var(--bg-dark); 
-            background-image: radial-gradient(circle at 50% 0%, #1a1a1f 0%, transparent 70%);
+            background-color: var(--bg-dark); 
+            /* Subtle Workspace Grid Background */
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                radial-gradient(circle at 50% 0%, rgba(168, 85, 247, 0.15) 0%, transparent 60%);
+            background-size: 30px 30px, 30px 30px, 100% 100%;
+            background-position: center top;
             color: var(--text-main); 
             font-family: 'Inter', system-ui, -apple-system, sans-serif; 
             display: flex; 
@@ -36,392 +44,403 @@
         /* --- START SCREEN --- */
         #start-screen {
             text-align: center;
-            max-width: 600px;
+            max-width: 700px;
             z-index: 10;
-            transition: opacity 0.5s ease, transform 0.5s ease;
+            transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .alpha-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            background: var(--accent-dim);
+            color: var(--accent);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            border-radius: 50px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 15px var(--accent-glow);
         }
         #start-screen h1 {
-            font-size: 3.5rem;
-            margin-bottom: 10px;
-            letter-spacing: -0.05em;
-            text-transform: uppercase;
-            background: linear-gradient(to right, #fff, var(--text-muted));
+            font-size: 4rem;
+            margin: 0 0 15px 0;
+            letter-spacing: -0.04em;
+            background: linear-gradient(to bottom right, #ffffff, #a1a1aa);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            font-weight: 700;
         }
         #start-screen p {
-            font-size: 1.2rem;
+            font-size: 1.25rem;
             color: var(--text-muted);
             line-height: 1.6;
-            margin-bottom: 40px;
+            margin-bottom: 45px;
+            font-weight: 300;
         }
         .play-btn {
-            background: var(--accent);
-            color: white;
+            background: var(--text-main);
+            color: var(--bg-dark);
             border: none;
-            padding: 20px 60px;
-            font-size: 1.2rem;
+            padding: 18px 45px;
+            font-size: 1.1rem;
             font-weight: 600;
-            border-radius: 50px;
+            border-radius: 8px;
             cursor: pointer;
-            text-transform: uppercase;
-            letter-spacing: 1px;
             transition: all 0.3s ease;
-            box-shadow: 0 0 20px var(--accent-glow);
+            box-shadow: 0 0 20px rgba(255,255,255,0.1);
         }
         .play-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 40px var(--accent-glow);
-            background: #b873f8;
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px var(--accent-glow);
+            background: var(--accent);
+            color: white;
         }
 
-        /* --- GAME UI --- */
+        /* --- GLASSMORPHISM GAME UI --- */
         #game-box { 
             width: 100%; 
-            max-width: 850px; 
-            padding: 50px; 
+            max-width: 900px; 
+            padding: 45px; 
             background: var(--card-dark); 
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--border-light); 
-            border-radius: 16px; 
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255,255,255,0.05); 
+            border-radius: 20px; 
+            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255,255,255,0.1); 
             position: relative; 
-            display: none; /* Hidden until play */
+            display: none;
             opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.5s ease, transform 0.5s ease;
+            transform: translateY(30px) scale(0.98);
+            transition: opacity 0.6s ease, transform 0.6s ease;
         }
 
+        /* Top HUD */
         .stat-bar { 
             display: flex; 
             flex-wrap: wrap; 
             justify-content: space-between; 
             gap: 15px; 
-            margin-bottom: 25px; 
+            margin-bottom: 20px; 
             font-family: 'Courier New', Courier, monospace; 
             color: var(--accent); 
             text-transform: uppercase;
+            border-bottom: 1px solid var(--border-light);
+            padding-bottom: 20px;
         }
         .stat-item { display: flex; flex-direction: column; align-items: flex-start; }
-        .stat-label { font-size: 0.75rem; color: var(--text-muted); letter-spacing: 1px; }
-        .stat-value { font-weight: bold; font-size: 1.3rem; }
+        .stat-label { font-size: 0.7rem; color: var(--text-muted); letter-spacing: 1.5px; margin-bottom: 4px; }
+        .stat-value { font-weight: bold; font-size: 1.3rem; color: var(--text-main); text-shadow: 0 0 10px rgba(255,255,255,0.1); }
+        .stat-value.purple { color: var(--accent); text-shadow: 0 0 15px var(--accent-glow); }
 
         /* Stress Bar */
-        #stress-container { width: 100%; height: 6px; background: var(--bg-dark); border-radius: 3px; margin-bottom: 30px; overflow: hidden; border: 1px solid var(--border-light); }
-        #stress-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s; }
+        #stress-container { width: 100%; height: 4px; background: rgba(0,0,0,0.5); border-radius: 2px; margin-bottom: 30px; overflow: hidden; }
+        #stress-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s; box-shadow: 0 0 10px var(--accent); }
 
-        /* Inventory */
+        /* Traits Inventory */
         #perks-container {
-            background: var(--bg-dark);
+            background: rgba(0,0,0,0.3);
             border: 1px solid var(--border-light);
-            border-radius: 8px;
-            padding: 15px;
+            border-radius: 12px;
+            padding: 16px;
             margin-bottom: 35px;
-            font-size: 0.85rem;
-            color: var(--text-muted);
             display: flex;
-            flex-wrap: wrap;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            flex-wrap: wrap;
         }
+        .perks-title { font-weight: 600; letter-spacing: 1.5px; font-size: 0.7rem; text-transform: uppercase; color: #71717a; }
         .perk-badge {
-            padding: 5px 12px;
-            border-radius: 4px;
-            font-family: monospace;
-            border: 1px solid #3f3f46;
-            animation: fadeIn 0.3s ease;
-            font-size: 0.8rem;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            border: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.75rem;
+            animation: fadeIn 0.4s ease;
+            letter-spacing: 0.5px;
         }
-        .perk-positive { background: rgba(16, 185, 129, 0.1); color: var(--success); border-color: rgba(16, 185, 129, 0.3); }
-        .perk-negative { background: rgba(239, 68, 68, 0.1); color: var(--danger); border-color: rgba(239, 68, 68, 0.3); }
-        .perk-neutral { background: var(--border-light); color: var(--text-main); }
+        .perk-positive { background: rgba(16, 185, 129, 0.05); color: var(--success); border-color: rgba(16, 185, 129, 0.3); }
+        .perk-negative { background: rgba(239, 68, 68, 0.05); color: var(--danger); border-color: rgba(239, 68, 68, 0.3); }
+        .perk-neutral { background: var(--accent-dim); color: var(--accent); border-color: rgba(168, 85, 247, 0.3); }
 
-        /* Typography & Content */
-        h2 { font-size: 2rem; margin: 0 0 15px 0; letter-spacing: -0.03em; font-weight: 600; color: white; }
-        #text { font-size: 1.15rem; line-height: 1.7; color: var(--text-muted); margin-bottom: 40px; min-height: 100px; }
+        /* Story Content */
+        h2 { font-size: 2.2rem; margin: 0 0 15px 0; letter-spacing: -0.04em; font-weight: 600; color: white; }
+        #text { 
+            font-size: 1.15rem; 
+            line-height: 1.7; 
+            color: var(--text-muted); 
+            margin-bottom: 45px; 
+            min-height: 110px; 
+            font-weight: 300;
+        }
         
-        /* Buttons */
+        /* Interactive Buttons */
         .btn-list { display: grid; gap: 14px; }
         button.choice-btn { 
-            background: var(--bg-dark); 
+            background: rgba(255, 255, 255, 0.02); 
             border: 1px solid var(--border-light); 
             color: var(--text-main); 
             padding: 22px 28px; 
-            border-radius: 10px; 
+            border-radius: 12px; 
             cursor: pointer; 
             text-align: left; 
             font-size: 1.05rem; 
-            transition: all 0.2s ease; 
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
-            position: relative;
-            overflow: hidden;
+            backdrop-filter: blur(10px);
         }
         
-        button.choice-btn::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: transparent; transition: background 0.2s;
-        }
-
         button.choice-btn:hover:not(:disabled) { 
-            background: #121215; 
-            border-color: #3f3f46; 
-            transform: translateX(6px); 
+            background: rgba(168, 85, 247, 0.05); 
+            border-color: var(--accent); 
+            transform: translateX(8px); 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
         }
-        button.choice-btn:hover:not(:disabled)::before { background: var(--accent); }
 
         button.choice-btn:disabled {
-            background: var(--locked-bg); color: #52525b; cursor: not-allowed; border-color: #27272a; border-style: dashed;
+            background: var(--locked-bg); color: #52525b; cursor: not-allowed; border-style: dashed;
         }
 
-        .effect-preview { font-size: 0.85rem; color: #71717a; font-family: monospace; text-align: right; min-width: 120px; }
-        .locked-text { font-size: 0.8rem; color: var(--accent); font-family: monospace; text-transform: uppercase; letter-spacing: 0.5px; }
+        .effect-preview { font-size: 0.8rem; color: #52525b; font-family: 'Courier New', monospace; text-align: right; min-width: 140px; transition: color 0.2s; }
+        button.choice-btn:hover .effect-preview { color: var(--accent); }
+        
+        .locked-text { font-size: 0.75rem; color: var(--danger); font-family: monospace; text-transform: uppercase; letter-spacing: 1px; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        .animate-fade { animation: fadeIn 0.4s ease forwards; }
+        
+        /* Custom Typewriter cursor */
+        .cursor { display: inline-block; width: 8px; height: 18px; background-color: var(--accent); animation: blink 1s infinite; vertical-align: middle; margin-left: 4px; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
     </style>
 </head>
 <body>
 
     <div id="start-screen">
-        <h1>Picao AI</h1>
-        <p>Bootstrap an all-in-one AI platform to a billion-dollar exit.<br>Manage your code, your cash, and your personal life. Don't break.</p>
-        <button class="play-btn" onclick="startGame()">Initialize Startup</button>
+        <div class="alpha-badge">Picao AI // Studio NYC</div>
+        <h1>Unified Creator Workspace</h1>
+        <p>The "Context Tax" is destroying the creator economy.<br>You have one thought. Build the platform that refracts it with zero friction.</p>
+        <button class="play-btn" onclick="startGame()">Start Alpha Simulation</button>
     </div>
 
     <div id="game-box">
         <div class="stat-bar">
-            <div class="stat-item"><span class="stat-label">FUNDING</span><span class="stat-value">$<span id="funding">0</span></span></div>
-            <div class="stat-item"><span class="stat-label">USERS</span><span class="stat-value"><span id="users">0</span></span></div>
-            <div class="stat-item"><span class="stat-label">SERIES</span><span class="stat-value"><span id="lvl">Pre-Seed</span></span></div>
-            <div class="stat-item"><span class="stat-label">STRESS</span><span class="stat-value"><span id="stress">0</span>%</span></div>
+            <div class="stat-item"><span class="stat-label">CAPITAL</span><span class="stat-value">$<span id="funding">0</span></span></div>
+            <div class="stat-item"><span class="stat-label">WORKSPACE USERS</span><span class="stat-value"><span id="users">0</span></span></div>
+            <div class="stat-item"><span class="stat-label">BUILD STAGE</span><span class="stat-value purple"><span id="lvl">Concept</span></span></div>
+            <div class="stat-item"><span class="stat-label">FRICTION / STRESS</span><span class="stat-value"><span id="stress">0</span>%</span></div>
         </div>
         
         <div id="stress-container"><div id="stress-fill"></div></div>
 
         <div id="perks-container">
-            <span style="font-weight: 600; letter-spacing: 1px; font-size: 0.75rem; text-transform: uppercase;">Life & Traits:</span>
+            <span class="perks-title">System Architecture & Traits:</span>
             <div id="perks-list" style="display: flex; gap: 8px; flex-wrap: wrap;">None</div>
         </div>
         
         <div id="content-area">
-            <h2 id="node-title">Day 0</h2>
-            <p id="text"></p>
+            <h2 id="node-title">System Init</h2>
+            <div style="position: relative;">
+                <p id="text-container"><span id="text"></span><span class="cursor" id="cursor"></span></p>
+            </div>
             <div id="buttons" class="btn-list"></div>
         </div>
     </div>
 
     <script>
-        // Data & State
-        const negativePerks = ["Toxic Co-Founder", "Strained Relationship", "Tech Debt", "Pending Divorce"];
-        const positivePerks = ["Supportive Partner", "10x Engineer", "Loyal Friend", "Top Tier Backing", "Cloud Credits", "Family First"];
+        // Data & Picao AI Brand Lore
+        const negativePerks = ["Context Tax", "Siloed Architecture", "Burnout", "High Friction"];
+        const positivePerks = ["Zero Friction", "Flow State", "Unified Ecosystem", "Top Tier Backing", "Model Agnostic"];
+        const neutralPerks = ["Multi-Model Splitting", "Voice Refraction", "Newsletter Engine"];
 
-        let state = { funding: 0, stress: 0, level: "Pre-Seed", users: 0, perks: [] };
+        let state = { funding: 0, stress: 0, level: "Concept", users: 0, perks: [] };
+        let typeWriterTimeout = null;
 
         function startGame() {
             const startScreen = document.getElementById('start-screen');
             const gameBox = document.getElementById('game-box');
             
             startScreen.style.opacity = '0';
-            startScreen.style.transform = 'translateY(-20px)';
+            startScreen.style.transform = 'translateY(-30px) scale(0.95)';
             
             setTimeout(() => {
                 startScreen.style.display = 'none';
                 gameBox.style.display = 'block';
-                // Trigger reflow
                 void gameBox.offsetWidth;
                 gameBox.style.opacity = '1';
-                gameBox.style.transform = 'translateY(0)';
+                gameBox.style.transform = 'translateY(0) scale(1)';
                 updateGame('start');
-            }, 500);
+            }, 600);
         }
 
+        // --- THE STORY DATA ---
         const story = {
-            // --- PHASE 1: INCEPTION & CO-FOUNDER ---
+            // PHASE 1: INCEPTION
             start: {
-                title: "The Picao AI Vision",
-                text: "You have a vision: Picao AI, an all-in-one platform helping creators ideate and launch faster by combining multiple AI tools into a single workspace. You have a supportive partner, a mortgage, and a day job. How do you begin?",
+                title: "The Rebellion Against Friction",
+                text: "Existing tools are silos. Creators are losing hours to the 'Context Tax'—switching between Notion, Canva, and ChatGPT. You envision Picao AI: a unified ecosystem where one thought equals infinite reach. How do you fund the Alpha?",
                 options: [
-                    { text: "Quit your job and risk it all immediately", next: "find_cofounder", perk: "Supportive Partner", effect: { stress: 25, funding: 10000 } },
-                    { text: "Moonlight. Keep the salary, sacrifice sleep", next: "find_cofounder", perk: "Supportive Partner", effect: { stress: 40, funding: 25000 } }
+                    { text: "Boot-strap it in secret (Maintain 100% control)", next: "alpha_build", perk: "Zero Friction", effect: { stress: 20, funding: 10000, lvl: "NYC_ALPHA_v1" } },
+                    { text: "Pitch VCs: 'We are the Workflow OS'", next: "vc_pitch", effect: { stress: 10 } },
+                    { text: "Build in public on X/Twitter as an indie dev", next: "alpha_build", perk: "Flow State", effect: { stress: 35, funding: 5000, users: 500, lvl: "NYC_ALPHA_v1" } }
                 ]
             },
-            find_cofounder: {
-                title: "The Co-Founder Dilemma",
-                text: "Building Picao AI alone is daunting. You need to structure your founding team. Your choice here will define the company's DNA.",
-                options: [
-                    { text: "Hire the '10x Ex-Googler' (Brilliant but arrogant)", next: "alpha_build", perk: "Toxic Co-Founder", effect: { funding: -5000, stress: 15 } },
-                    { text: "Partner with your best friend (Loyal but junior coder)", next: "alpha_build", perk: "Loyal Friend", effect: { stress: -10 } },
-                    { text: "Go completely Solo (Keep 100% equity)", next: "alpha_build", perk: "Solo Founder", effect: { stress: 20 } }
-                ]
-            },
-
-            // --- PHASE 2: THE BUILD & FAMILY CONFLICT ---
-            alpha_build: {
-                title: "The Alpha Release",
-                text: "Months pass. The Picao AI workspace is functional but unpolished. You have a choice: Launch quietly to test the waters, or do a massive marketing push?",
-                options: [
-                    { text: "Soft launch to a private Discord of creators", next: "family_crisis", effect: { users: 500, funding: 2000, stress: 5, lvl: "Seed" } },
-                    { text: "Launch on Product Hunt with a flashy video", next: "family_crisis", effect: { users: 8000, stress: 20, lvl: "Seed" } }
-                ]
-            },
-            family_crisis: {
-                title: "The Work-Life Collision",
-                text: "It's your partner's milestone birthday dinner tonight. Suddenly, Picao AI's text-generation API goes down. Thousands of users are getting error screens.",
-                options: [
-                    { text: "Skip the dinner. Fix the servers.", next: "cofounder_fallout", perk: "Strained Relationship", removePerk: "Supportive Partner", effect: { users: 2000, stress: 25 } },
-                    { text: "Go to the dinner. Let the servers burn.", next: "cofounder_fallout", perk: "Family First", effect: { users: -3000, stress: -15, funding: -2000 } }
-                ]
-            },
-
-            // --- PHASE 3: CONSEQUENCES OF YOUR TEAM ---
-            cofounder_fallout: {
-                title: "Internal Friction",
-                text: "The dust settles, but internal issues arise based on who you chose to build Picao AI with.",
-                options: [
-                    { text: "[Requires: Toxic Co-Founder] They threaten to leave and steal the code.", next: "lawsuit_threat", reqPerk: "Toxic Co-Founder", effect: { stress: 30 } },
-                    { text: "[Requires: Loyal Friend] Their messy code caused the crash. Massive Tech Debt.", next: "tech_debt", reqPerk: "Loyal Friend", effect: { stress: 15 } },
-                    { text: "[Requires: Solo Founder] You are doing everything yourself. Severe insomnia.", next: "solo_burnout", reqPerk: "Solo Founder", effect: { stress: 25 } },
-                    { text: "Push through the pain and seek venture capital.", next: "vc_pitch", effect: { stress: 10 } }
-                ]
-            },
-            lawsuit_threat: {
-                title: "The Hostile Takeover",
-                text: "Your '10x' co-founder demands 60% equity or they will open-source Picao AI's proprietary algorithms.",
-                options: [
-                    { text: "Buy them out with company cash", next: "vc_pitch", effect: { funding: -15000, stress: 10 }, removePerk: "Toxic Co-Founder" },
-                    { text: "Fight them in court", next: "vc_pitch", effect: { stress: 40, funding: -5000 } }
-                ]
-            },
-            tech_debt: {
-                title: "The Spaghetti Code",
-                text: "Picao AI is growing, but adding new features takes weeks because the codebase is a disaster.",
-                options: [
-                    { text: "Pause growth for 2 months to rewrite everything", next: "vc_pitch", effect: { users: -1000, stress: 10, funding: -5000 } },
-                    { text: "Keep patching it and pray", next: "vc_pitch", perk: "Tech Debt", effect: { users: 5000, stress: 25 } }
-                ]
-            },
-            solo_burnout: {
-                title: "Atlas Holding the Sky",
-                text: "You are the CEO, CTO, and Customer Support. You are answering tickets at 4 AM.",
-                options: [
-                    { text: "Hire an expensive agency to help", next: "vc_pitch", effect: { funding: -12000, stress: -20 } },
-                    { text: "Automate support using your own AI", next: "vc_pitch", effect: { users: 2000, stress: 15 } }
-                ]
-            },
-
-            // --- PHASE 4: THE CROSSROADS ---
             vc_pitch: {
-                title: "The Sand Hill Road Pitch",
-                text: "Picao AI has traction. Sequoia Capital offers you a $3 Million Series A. But they want you to pivot entirely away from creators and focus strictly on B2B Enterprise.",
+                title: "Selling the Vision",
+                text: "You step into a VC firm in NYC. You tell them Picao AI isn't just a tool; it's a rebellion. They love the vision, but they want you to focus purely on enterprise B2B instead of creators.",
                 options: [
-                    { text: "Take the money. Pivot to Enterprise.", next: "enterprise_grind", effect: { funding: 3000000, lvl: "Series A", stress: 20 } },
-                    { text: "Reject them. Stay true to the creators.", next: "indie_struggle", effect: { stress: 15 } }
-                ]
-            },
-            enterprise_grind: {
-                title: "The Corporate Pivot",
-                text: "You have millions in the bank, but you spend your days in boring Zoom calls with compliance officers. The soul of Picao AI feels lost.",
-                options: [
-                    { text: "[Requires: Strained Relationship] Your partner files for divorce due to your absence.", next: "divorce_crisis", reqPerk: "Strained Relationship", effect: { stress: 45, funding: -1000000 } },
-                    { text: "Double down on sales. Push for Series B.", next: "series_b", effect: { users: 50000, funding: 2000000, stress: 25 } },
-                    { text: "Accept a buyout offer from Microsoft.", next: "win_corporate", effect: { funding: 45000000, stress: -50 } }
-                ]
-            },
-            indie_struggle: {
-                title: "Bootstrapped Resilience",
-                text: "You rejected the VCs. You are building for the creators. Growth is slower, but margins are incredible. A major tech giant clones Picao AI.",
-                options: [
-                    { text: "[Requires: Tech Debt] Your servers crash under the competition. You lose.", next: "lose_competition", reqPerk: "Tech Debt", effect: { stress: 50 } },
-                    { text: "Rally your loyal community to fight back", next: "series_b", effect: { users: 150000, stress: 30, funding: 500000 } },
-                    { text: "Stop growing. Optimize for a lifestyle business.", next: "win_indie", effect: { stress: -40, funding: 800000 } }
-                ]
-            },
-            divorce_crisis: {
-                title: "The Ultimatum",
-                text: "The papers are signed. You have all the money in the world, but your house is empty. The board is demanding your attention for the next quarter.",
-                options: [
-                    { text: "Bury yourself entirely in the work.", next: "series_b", perk: "Pending Divorce", removePerk: "Strained Relationship", effect: { stress: 20, funding: 1000000 } }
+                    { text: "Take their $500k and pivot to Enterprise", next: "enterprise_trap", perk: "Siloed Architecture", effect: { funding: 500000, stress: 25, lvl: "Corporate Beta" } },
+                    { text: "Reject the pivot. Walk away with nothing.", next: "alpha_build", perk: "Zero Friction", effect: { stress: 15, funding: 2000, lvl: "NYC_ALPHA_v1" } },
+                    { text: "Convince them creators ARE the new enterprise", next: "alpha_build", perk: "Top Tier Backing", effect: { funding: 250000, stress: 30, lvl: "NYC_ALPHA_v1" } }
                 ]
             },
 
-            // --- PHASE 5: THE ENDGAME ---
-            series_b: {
-                title: "The Final Push",
-                text: "Picao AI is a behemoth. You have 200 employees. The stress is ungodly, but you are on the verge of a historic IPO. Do you ring the bell?",
+            // PHASE 2: THE ALPHA LAUNCH
+            alpha_build: {
+                title: "NYC_ALPHA_v2.6",
+                text: "Your core engine is live. The UI is sleek. You announce to the world: 'Join the Private Alpha. 14 Spots Remaining.' Who do you give these exclusive spots to?",
                 options: [
-                    { text: "Ring the IPO Bell (Go Public)", next: "win_ipo", effect: { funding: 2000000000, stress: 50, lvl: "IPO" } },
-                    { text: "Step down as CEO and preserve your sanity", next: "win_corporate", effect: { funding: 85000000, stress: -80 } }
+                    { text: "Give all 14 spots to massive tech influencers", next: "feature_crossroad", effect: { users: 15000, stress: 30 } },
+                    { text: "Give them to hardcore, everyday writers", next: "feature_crossroad", perk: "Unified Ecosystem", effect: { users: 1000, stress: -10 } },
+                    { text: "Charge $1,000 per spot for instant runway", next: "feature_crossroad", effect: { funding: 14000, users: 14, stress: 10 } }
                 ]
             },
 
-            // --- GAME OVER STATES (Handled smoothly, no alerts) ---
+            // PHASE 3: PRODUCT ROADMAP
+            feature_crossroad: {
+                title: "The Refraction Engine",
+                text: "Users are in the workspace. They love capturing their ideas via the 2-minute voice recorder. But they want you to expand the 'Refract' feature. What do you build next?",
+                options: [
+                    { text: "Build 'Multi-Model Splitting' (1 thought to 12 assets)", next: "context_tax_crisis", perk: "Multi-Model Splitting", effect: { users: 5000, stress: 15, funding: -2000 } },
+                    { text: "Build 'Model Agnostic Intelligence' (Best LLM per task)", next: "context_tax_crisis", perk: "Model Agnostic", effect: { users: 3000, stress: 10, funding: -5000 } },
+                    { text: "Build the 'Newsletter Engine' for long-form dives", next: "context_tax_crisis", perk: "Newsletter Engine", effect: { users: 2000, funding: 5000 } },
+                    { text: "[Requires: Top Tier Backing] Build Direct Native API Publishing", next: "context_tax_crisis", reqPerk: "Top Tier Backing", effect: { users: 20000, stress: 25, funding: -50000 } }
+                ]
+            },
+
+            // PHASE 4: THE CRISIS
+            context_tax_crisis: {
+                title: "The Context Tax Returns",
+                text: "As Picao scales, users complain that exporting content to Canva and Notion manually is bringing the 'Context Tax' back. They are losing their flow state.",
+                options: [
+                    { text: "Spend 2 months coding Auto-Import integrations", next: "giant_clone", effect: { funding: -15000, stress: 20, lvl: "v3.0 Scale" } },
+                    { text: "Ignore them. Force them to use Picao for everything.", next: "giant_clone", perk: "Context Tax", removePerk: "Zero Friction", effect: { users: -5000, stress: -10 } },
+                    { text: "[Requires: Unified Ecosystem] Deploy the seamless web-extension", next: "giant_clone", reqPerk: "Unified Ecosystem", effect: { users: 10000, stress: 5, funding: 10000, lvl: "v3.0 Scale" } }
+                ]
+            },
+            enterprise_trap: {
+                title: "The Golden Handcuffs",
+                text: "You took the VC money and built B2B software. Picao AI is now just a boring dashboard for compliance officers. The 'Rebellion' is dead, but the bank account is full.",
+                options: [
+                    { text: "Sell out completely to Private Equity", next: "win_corporate", effect: { funding: 35000000, stress: -50 } },
+                    { text: "Secretly use company funds to rebuild the Creator Workspace", next: "alpha_build", perk: "High Friction", effect: { stress: 45, funding: -100000, users: 0 } }
+                ]
+            },
+
+            // PHASE 5: THE SHOWDOWN
+            giant_clone: {
+                title: "The Tech Giant Clone",
+                text: "Emergency. A massive Silicon Valley tech giant just announced a 'Unified Workspace' that looks exactly like Picao AI. They are offering it for free.",
+                options: [
+                    { text: "[Requires: Context Tax] Your high friction drives users away. You lose.", next: "lose_competition", reqPerk: "Context Tax", effect: { stress: 50 } },
+                    { text: "[Requires: Model Agnostic] Your superior AI logic beats their generic clone.", next: "endgame", reqPerk: "Model Agnostic", effect: { users: 50000, stress: 20, funding: 200000 } },
+                    { text: "Rally the creator community. Call out the giant on X.", next: "endgame", effect: { users: 100000, stress: 45, funding: 50000 } },
+                    { text: "Pivot heavily into Voice Cloning to stay unique", next: "endgame", effect: { funding: -20000, users: 30000, stress: 25 } }
+                ]
+            },
+
+            // PHASE 6: ENDGAME
+            endgame: {
+                title: "The Peak Flow State",
+                text: "You survived the clone wars. Picao AI is processing millions of 'Refractions' a day. Creators are ideating and launching faster than ever in history. The board calls a meeting.",
+                options: [
+                    { text: "Ring the Bell. Launch the Picao AI IPO.", next: "win_ipo", effect: { funding: 1500000000, stress: 50, lvl: "PUBLIC" } },
+                    { text: "Accept a $100M acquisition from Stripe", next: "win_corporate", effect: { funding: 100000000, stress: -80, lvl: "ACQUIRED" } },
+                    { text: "[Requires: Zero Friction] Stay independent. Rule the creator class.", next: "win_indie", reqPerk: "Zero Friction", effect: { funding: 5000000, stress: -40, lvl: "EMPIRE" } }
+                ]
+            },
+
+            // --- FAIL STATES ---
             lose_burnout: {
-                title: "CRITICAL FAILURE: BURNOUT",
-                text: "Your vision fades to black. You pushed yourself past the physical limit. You wake up in a hospital. While you were recovering, the board replaced you, and Picao AI was sold for parts. Take care of your mental health.",
-                options: [{ text: "Restart Timeline", next: "start", reset: true }]
+                title: "CRITICAL SYSTEM FAILURE",
+                text: "The Context Tax broke you. You managed too many variables, suffered severe burnout, and collapsed. The Picao AI servers were shut down while you recovered. Protect your peace next time.",
+                options: [{ text: "Reboot Simulation", next: "start", reset: true }]
             },
             lose_bankrupt: {
-                title: "CRITICAL FAILURE: BANKRUPTCY",
-                text: "The runway is gone. AWS shuts off the servers. The Slack channel goes dead. Picao AI is officially defunct. You have to update your LinkedIn to 'Looking for new opportunities.'",
-                options: [{ text: "Restart Timeline", next: "start", reset: true }]
+                title: "API BILLING DEPLETED",
+                text: "You ran out of runway. The LLM API bills stacked up, and Stripe disabled your account. Picao AI is dead. You have to go back to juggling 10 different apps.",
+                options: [{ text: "Reboot Simulation", next: "start", reset: true }]
             },
             lose_competition: {
-                title: "CRUSHED BY THE GIANT",
-                text: "Because of your tech debt and lack of funding, you couldn't adapt when the massive tech giant cloned your product. Your users migrated to the free alternative. Picao AI dies a slow death.",
-                options: [{ text: "Restart Timeline", next: "start", reset: true }]
+                title: "CRUSHED BY SILOS",
+                text: "Because you introduced 'Context Tax' back into your own product, you couldn't defend against the Tech Giant. Users left for the free, albeit clunky, alternative.",
+                options: [{ text: "Reboot Simulation", next: "start", reset: true }]
             },
 
             // --- WIN STATES ---
             win_corporate: {
-                title: "THE ACQUISITION EXIT 💰",
-                text: "You sold Picao AI. You walk away with generational wealth. You buy a house in the hills and finally sleep for 12 hours a night. You succeeded, but you're no longer the captain of the ship.",
-                options: [{ text: "Found a New Startup", next: "start", reset: true }]
+                title: "ACQUISITION COMPLETE 💰",
+                text: "You sold Picao AI. The 'Context Tax' is someone else's problem now. You walk away with generational wealth. You succeeded, but you no longer control the workspace.",
+                options: [{ text: "Initialize New Startup", next: "start", reset: true }]
             },
             win_indie: {
-                title: "THE INDIE DREAM 🌴",
-                text: "You maintained total control. Picao AI is highly profitable and fully automated. You work 4 hours a day, travel with your family, and answer to absolutely no one. You won the game of life.",
-                options: [{ text: "Found a New Startup", next: "start", reset: true }]
+                title: "THE UNIFIED EMPIRE 👑",
+                text: "Total victory. Picao AI remains independent. You eliminated friction for millions of creators while maintaining complete ownership. You have achieved permanent Flow State.",
+                options: [{ text: "Initialize New Startup", next: "start", reset: true }]
             },
             win_ipo: {
-                title: "UNICORN STATUS 🦄",
-                text: "You ring the bell at the NYSE. Confetti falls. Picao AI is a publicly traded phenomenon that changed the creator economy forever. You are a billionaire. The stress was temporary; the legacy is forever.",
-                options: [{ text: "Found a New Startup", next: "start", reset: true }]
+                title: "UNICORN REFRACTION 🦄",
+                text: "You ring the bell at the NYSE. Picao AI is now the global standard Workflow OS. You are a billionaire. The vision of 'One Thought. Infinite Reach.' is now a worldwide reality.",
+                options: [{ text: "Initialize New Startup", next: "start", reset: true }]
             }
         };
 
         function formatFunding(num) {
-            if (num >= 1000000000) return (num / 1000000000).toFixed(1) + 'B';
-            if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
-            return num.toLocaleString();
+            if (num >= 1000000000) return '$' + (num / 1000000000).toFixed(1) + 'B';
+            if (num >= 1000000) return '$' + (num / 1000000).toFixed(1) + 'M';
+            return '$' + num.toLocaleString();
+        }
+
+        // Typewriter Effect Logic
+        function typeWriter(text, i, cb) {
+            const textElement = document.getElementById("text");
+            if (i < text.length) {
+                textElement.innerHTML += text.charAt(i);
+                typeWriterTimeout = setTimeout(function() {
+                    typeWriter(text, i + 1, cb);
+                }, 15); // Speed of typing
+            } else {
+                if(cb) cb();
+            }
         }
 
         function updateGame(nodeKey) {
             const node = story[nodeKey];
-            const contentArea = document.getElementById('content-area');
+            const btnBox = document.getElementById('buttons');
+            const textElement = document.getElementById("text");
             
-            // Re-trigger fade animation
-            contentArea.classList.remove('animate-fade');
-            void contentArea.offsetWidth; 
-            contentArea.classList.add('animate-fade');
+            // Clear previous typing timeouts
+            if(typeWriterTimeout) clearTimeout(typeWriterTimeout);
+            
+            // Hide buttons while typing
+            btnBox.style.display = 'none';
+            btnBox.innerHTML = '';
+            textElement.innerHTML = '';
 
             // Handle Hard Resets
             if (node.options && node.options[0].reset) {
-                state = { funding: 0, stress: 0, level: "Pre-Seed", users: 0, perks: [] };
+                state = { funding: 0, stress: 0, level: "Concept", users: 0, perks: [] };
             }
 
-            // Render Text
+            // Render Title
             document.getElementById('node-title').innerText = node.title;
-            document.getElementById('text').innerText = node.text;
             
-            // Build Buttons
-            const btnBox = document.getElementById('buttons');
-            btnBox.innerHTML = '';
-
+            // Build Buttons (Memory)
             node.options.forEach(opt => {
                 const btn = document.createElement('button');
                 btn.className = 'choice-btn';
                 
-                // Format Effect Preview
                 let previewText = "";
                 if(opt.effect) {
                     let changes = [];
@@ -431,20 +450,18 @@
                     if(changes.length > 0) previewText = `<span class="effect-preview">[${changes.join(' | ')}]</span>`;
                 }
 
-                // Handle Prerequisites (Locked options)
                 const isLocked = opt.reqPerk && !state.perks.includes(opt.reqPerk);
                 
                 if (isLocked) {
                     btn.innerHTML = `<div><span class="locked-text">Locked: Requires [${opt.reqPerk}]</span><br><span style="color: #71717a; font-size: 0.95rem;">${opt.text}</span></div>`;
                     btn.disabled = true;
                 } else {
-                    let perkAddText = opt.perk ? `<br><span style="font-size: 0.75rem; color: var(--accent); margin-top: 4px; display: inline-block;">+ Trait Acquired: [${opt.perk}]</span>` : '';
-                    let perkRemoveText = opt.removePerk ? `<br><span style="font-size: 0.75rem; color: var(--danger); margin-top: 4px; display: inline-block;">- Trait Lost: [${opt.removePerk}]</span>` : '';
+                    let perkAddText = opt.perk ? `<br><span style="font-size: 0.75rem; color: var(--accent); margin-top: 6px; display: inline-block;">+ Trait Acquired: [${opt.perk}]</span>` : '';
+                    let perkRemoveText = opt.removePerk ? `<br><span style="font-size: 0.75rem; color: var(--danger); margin-top: 6px; display: inline-block;">- Trait Lost: [${opt.removePerk}]</span>` : '';
                     
                     btn.innerHTML = `<div>${opt.text}${perkAddText}${perkRemoveText}</div> ${previewText}`;
                     
                     btn.onclick = () => {
-                        // Apply Effects
                         if (opt.effect) {
                             state.funding += (opt.effect.funding || 0);
                             state.stress += (opt.effect.stress || 0);
@@ -455,14 +472,12 @@
                             if(state.users < 0) state.users = 0;
                         }
 
-                        // Apply Perks Add/Remove
                         if (opt.perk && !state.perks.includes(opt.perk)) state.perks.push(opt.perk);
                         if (opt.removePerk) state.perks = state.perks.filter(p => p !== opt.removePerk);
                         
-                        // Engine Check: Fail States
                         if (state.stress >= 100 && !nodeKey.startsWith('lose_') && !nodeKey.startsWith('win_')) {
                             updateGame('lose_burnout');
-                        } else if (state.funding < -30000 && !nodeKey.startsWith('lose_') && !nodeKey.startsWith('win_')) {
+                        } else if (state.funding < -25000 && !nodeKey.startsWith('lose_') && !nodeKey.startsWith('win_')) {
                             updateGame('lose_bankrupt');
                         } else {
                             updateGame(opt.next);
@@ -472,8 +487,16 @@
                 btnBox.appendChild(btn);
             });
 
+            // Trigger Typewriter, then show buttons
+            typeWriter(node.text, 0, () => {
+                btnBox.style.display = 'grid';
+                btnBox.classList.remove('animate-fade');
+                void btnBox.offsetWidth;
+                btnBox.classList.add('animate-fade');
+            });
+
             // Update UI Counters
-            document.getElementById('funding').innerText = formatFunding(state.funding);
+            document.getElementById('funding').innerText = formatFunding(state.funding).replace('$', '');
             document.getElementById('users').innerText = state.users.toLocaleString();
             document.getElementById('stress').innerText = state.stress;
             document.getElementById('lvl').innerText = state.level;
@@ -481,7 +504,7 @@
             // Render Inventory / Traits
             const perksList = document.getElementById('perks-list');
             if (state.perks.length === 0) {
-                perksList.innerHTML = "<span style='opacity: 0.5'>Clean Slate</span>";
+                perksList.innerHTML = "<span style='opacity: 0.3; font-family: monospace; font-size: 0.8rem;'>System Nominal...</span>";
             } else {
                 perksList.innerHTML = state.perks.map(p => {
                     let styleClass = 'perk-neutral';
@@ -494,9 +517,16 @@
             // Animate Stress Bar
             const stressFill = document.getElementById('stress-fill');
             stressFill.style.width = `${Math.min(state.stress, 100)}%`;
-            if (state.stress < 40) stressFill.style.background = "var(--success)"; 
-            else if (state.stress < 75) stressFill.style.background = "#f59e0b"; 
-            else stressFill.style.background = "var(--danger)"; 
+            if (state.stress < 40) { 
+                stressFill.style.background = "var(--success)"; 
+                stressFill.style.boxShadow = "0 0 10px var(--success)";
+            } else if (state.stress < 75) { 
+                stressFill.style.background = "#f59e0b"; 
+                stressFill.style.boxShadow = "0 0 10px #f59e0b";
+            } else { 
+                stressFill.style.background = "var(--danger)"; 
+                stressFill.style.boxShadow = "0 0 10px var(--danger)";
+            }
         }
     </script>
 </body>
