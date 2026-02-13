@@ -3,21 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FOUNDER QUEST: BOOTSTRAP TO EXIT</title>
+    <title>Picao AI: The Founder's Journey</title>
     <style>
-        /* Core Palette - Sleek Dark Mode */
+        /* Core Picao AI Palette */
         :root { 
-            --accent: #ff4500; 
-            --bg-dark: #09090b;
-            --card-dark: #18181b; 
+            --accent: #ff4500; /* Signature Orange */
+            --accent-glow: rgba(255, 69, 0, 0.4);
+            --bg-dark: #09090b; /* Deep Black */
+            --card-dark: #18181b; /* Zinc */
             --border-light: #27272a; 
             --text-main: #fafafa; 
             --text-muted: #a1a1aa;
             --locked-bg: #121214;
+            --danger: #ef4444;
+            --success: #10b981;
         }
         
         body { 
             background: var(--bg-dark); 
+            background-image: radial-gradient(circle at 50% 0%, #1a1a1f 0%, transparent 70%);
             color: var(--text-main); 
             font-family: 'Inter', system-ui, -apple-system, sans-serif; 
             display: flex; 
@@ -27,369 +31,386 @@
             margin: 0; 
             padding: 20px; 
             box-sizing: border-box; 
+            overflow-x: hidden;
         }
 
+        /* --- START SCREEN --- */
+        #start-screen {
+            text-align: center;
+            max-width: 600px;
+            z-index: 10;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        #start-screen h1 {
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            letter-spacing: -0.05em;
+            text-transform: uppercase;
+            background: linear-gradient(to right, #fff, var(--text-muted));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        #start-screen p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 40px;
+        }
+        .play-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 20px 60px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+        .play-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 40px var(--accent-glow);
+            background: #ff571a;
+        }
+
+        /* --- GAME UI --- */
         #game-box { 
             width: 100%; 
-            max-width: 800px; 
-            padding: 45px; 
+            max-width: 850px; 
+            padding: 50px; 
             background: var(--card-dark); 
             border: 1px solid var(--border-light); 
             border-radius: 16px; 
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7); 
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255,255,255,0.05); 
             position: relative; 
-            overflow: hidden;
+            display: none; /* Hidden until play */
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
         }
 
-        /* Top HUD */
         .stat-bar { 
             display: flex; 
             flex-wrap: wrap; 
             justify-content: space-between; 
             gap: 15px; 
-            margin-bottom: 20px; 
+            margin-bottom: 25px; 
             font-family: 'Courier New', Courier, monospace; 
             color: var(--accent); 
-            font-size: 1rem; 
             text-transform: uppercase;
-            letter-spacing: 1px;
         }
-
         .stat-item { display: flex; flex-direction: column; align-items: flex-start; }
-        .stat-label { font-size: 0.7rem; color: var(--text-muted); }
-        .stat-value { font-weight: bold; font-size: 1.2rem; }
+        .stat-label { font-size: 0.75rem; color: var(--text-muted); letter-spacing: 1px; }
+        .stat-value { font-weight: bold; font-size: 1.3rem; }
 
-        /* Perks Inventory */
+        /* Stress Bar */
+        #stress-container { width: 100%; height: 6px; background: var(--bg-dark); border-radius: 3px; margin-bottom: 30px; overflow: hidden; border: 1px solid var(--border-light); }
+        #stress-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s; }
+
+        /* Inventory */
         #perks-container {
             background: var(--bg-dark);
             border: 1px solid var(--border-light);
             border-radius: 8px;
-            padding: 12px 15px;
-            margin-bottom: 30px;
+            padding: 15px;
+            margin-bottom: 35px;
             font-size: 0.85rem;
             color: var(--text-muted);
             display: flex;
+            flex-wrap: wrap;
             align-items: center;
             gap: 10px;
         }
         .perk-badge {
-            background: var(--border-light);
-            color: var(--text-main);
-            padding: 4px 10px;
+            padding: 5px 12px;
             border-radius: 4px;
             font-family: monospace;
             border: 1px solid #3f3f46;
             animation: fadeIn 0.3s ease;
+            font-size: 0.8rem;
         }
+        .perk-positive { background: rgba(16, 185, 129, 0.1); color: var(--success); border-color: rgba(16, 185, 129, 0.3); }
+        .perk-negative { background: rgba(239, 68, 68, 0.1); color: var(--danger); border-color: rgba(239, 68, 68, 0.3); }
+        .perk-neutral { background: var(--border-light); color: var(--text-main); }
 
-        /* Stress Bar Indicator */
-        #stress-container { width: 100%; height: 4px; background: var(--bg-dark); border-radius: 2px; margin-bottom: 30px; overflow: hidden; }
-        #stress-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
-
-        /* Main Content Area */
-        h1 { font-size: 1.8rem; margin: 0 0 15px 0; letter-spacing: -0.03em; font-weight: 600; }
-        #text { font-size: 1.1rem; line-height: 1.7; color: var(--text-muted); margin-bottom: 35px; min-height: 90px; transition: opacity 0.3s ease; }
+        /* Typography & Content */
+        h2 { font-size: 2rem; margin: 0 0 15px 0; letter-spacing: -0.03em; font-weight: 600; color: white; }
+        #text { font-size: 1.15rem; line-height: 1.7; color: var(--text-muted); margin-bottom: 40px; min-height: 100px; }
         
-        /* Buttons / Options */
-        .btn-list { display: grid; gap: 12px; }
-        
-        button { 
+        /* Buttons */
+        .btn-list { display: grid; gap: 14px; }
+        button.choice-btn { 
             background: var(--bg-dark); 
             border: 1px solid var(--border-light); 
             color: var(--text-main); 
-            padding: 20px 24px; 
-            border-radius: 8px; 
+            padding: 22px 28px; 
+            border-radius: 10px; 
             cursor: pointer; 
             text-align: left; 
-            font-size: 1rem; 
-            font-weight: 400; 
+            font-size: 1.05rem; 
             transition: all 0.2s ease; 
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
+            position: relative;
+            overflow: hidden;
         }
         
-        button:hover:not(:disabled) { 
-            background: var(--border-light); 
-            border-color: var(--accent); 
-            transform: translateX(4px); 
+        button.choice-btn::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: transparent; transition: background 0.2s;
         }
 
-        button:active:not(:disabled) { transform: translateX(2px); }
+        button.choice-btn:hover:not(:disabled) { 
+            background: #121215; 
+            border-color: #3f3f46; 
+            transform: translateX(6px); 
+        }
+        button.choice-btn:hover:not(:disabled)::before { background: var(--accent); }
 
-        button:disabled {
-            background: var(--locked-bg);
-            color: #52525b;
-            cursor: not-allowed;
-            border-color: #27272a;
-            border-style: dashed;
+        button.choice-btn:disabled {
+            background: var(--locked-bg); color: #52525b; cursor: not-allowed; border-color: #27272a; border-style: dashed;
         }
 
-        .effect-preview { font-size: 0.8rem; color: #71717a; font-family: monospace; }
-        .locked-text { font-size: 0.8rem; color: var(--accent); font-family: monospace; text-transform: uppercase; }
+        .effect-preview { font-size: 0.85rem; color: #71717a; font-family: monospace; text-align: right; min-width: 120px; }
+        .locked-text { font-size: 0.8rem; color: var(--accent); font-family: monospace; text-transform: uppercase; letter-spacing: 0.5px; }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade { animation: fadeIn 0.4s ease forwards; }
-
     </style>
 </head>
 <body>
+
+    <div id="start-screen">
+        <h1>Picao AI</h1>
+        <p>Bootstrap an all-in-one AI platform to a billion-dollar exit.<br>Manage your code, your cash, and your personal life. Don't break.</p>
+        <button class="play-btn" onclick="startGame()">Initialize Startup</button>
+    </div>
+
     <div id="game-box">
         <div class="stat-bar">
             <div class="stat-item"><span class="stat-label">FUNDING</span><span class="stat-value">$<span id="funding">0</span></span></div>
             <div class="stat-item"><span class="stat-label">USERS</span><span class="stat-value"><span id="users">0</span></span></div>
-            <div class="stat-item"><span class="stat-label">STAGE</span><span class="stat-value">Lvl <span id="lvl">1</span></span></div>
+            <div class="stat-item"><span class="stat-label">SERIES</span><span class="stat-value"><span id="lvl">Pre-Seed</span></span></div>
             <div class="stat-item"><span class="stat-label">STRESS</span><span class="stat-value"><span id="stress">0</span>%</span></div>
         </div>
         
         <div id="stress-container"><div id="stress-fill"></div></div>
 
         <div id="perks-container">
-            <span>INVENTORY:</span>
-            <div id="perks-list">None</div>
+            <span style="font-weight: 600; letter-spacing: 1px; font-size: 0.75rem; text-transform: uppercase;">Life & Traits:</span>
+            <div id="perks-list" style="display: flex; gap: 8px; flex-wrap: wrap;">None</div>
         </div>
         
         <div id="content-area">
-            <h1 id="node-title">Day 0</h1>
+            <h2 id="node-title">Day 0</h2>
             <p id="text"></p>
             <div id="buttons" class="btn-list"></div>
         </div>
     </div>
 
     <script>
-        let state = { funding: 0, stress: 0, level: 1, users: 0, perks: [] };
+        // Data & State
+        const negativePerks = ["Toxic Co-Founder", "Strained Relationship", "Tech Debt", "Pending Divorce"];
+        const positivePerks = ["Supportive Partner", "10x Engineer", "Loyal Friend", "Top Tier Backing", "Cloud Credits", "Family First"];
+
+        let state = { funding: 0, stress: 0, level: "Pre-Seed", users: 0, perks: [] };
+
+        function startGame() {
+            const startScreen = document.getElementById('start-screen');
+            const gameBox = document.getElementById('game-box');
+            
+            startScreen.style.opacity = '0';
+            startScreen.style.transform = 'translateY(-20px)';
+            
+            setTimeout(() => {
+                startScreen.style.display = 'none';
+                gameBox.style.display = 'block';
+                // Trigger reflow
+                void gameBox.offsetWidth;
+                gameBox.style.opacity = '1';
+                gameBox.style.transform = 'translateY(0)';
+                updateGame('start');
+            }, 500);
+        }
 
         const story = {
+            // --- PHASE 1: INCEPTION & CO-FOUNDER ---
             start: {
                 title: "The Picao AI Vision",
-                text: "You have a vision: Picao AI, an all-in-one AI platform that helps creators and builders ideate, create, and launch faster. It combines multiple powerful AI tools into one unified workspace. How do you begin?",
+                text: "You have a vision: Picao AI, an all-in-one platform helping creators ideate and launch faster by combining multiple AI tools into a single workspace. You have a supportive partner, a mortgage, and a day job. How do you begin?",
                 options: [
-                    { text: "Quit your job and build immediately", next: "quit_now", effect: { stress: 25, funding: 2000 } },
-                    { text: "Moonlight and build a prototype slowly", next: "moonlight", effect: { stress: 10, funding: 8000 } },
-                    { text: "Pitch the idea to a brilliant engineer friend", next: "find_cofounder", effect: { stress: 5, funding: 5000 } }
+                    { text: "Quit your job and risk it all immediately", next: "find_cofounder", perk: "Supportive Partner", effect: { stress: 25, funding: 10000 } },
+                    { text: "Moonlight. Keep the salary, sacrifice sleep", next: "find_cofounder", perk: "Supportive Partner", effect: { stress: 40, funding: 25000 } }
                 ]
             },
             find_cofounder: {
-                title: "The Co-Founder",
-                text: "Your friend loves the idea of Picao AI. They agree to split equity 50/50 and handle the backend architecture. You instantly double your development speed.",
+                title: "The Co-Founder Dilemma",
+                text: "Building Picao AI alone is daunting. You need to structure your founding team. Your choice here will define the company's DNA.",
                 options: [
-                    { text: "Start building the MVP in stealth mode", next: "stealth", perk: "Co-Founder", effect: { lvl: 1, stress: -5 } },
-                    { text: "Build in public on X (Twitter)", next: "build_public", perk: "Co-Founder", effect: { lvl: 1 } }
-                ]
-            },
-            build_public: {
-                title: "Building in Public",
-                text: "You post daily updates about Picao AI's unified workspace. A thread showcasing your text-to-image integration goes completely viral.",
-                options: [
-                    { text: "Capture emails for a waitlist", next: "beta", perk: "Viral Audience", effect: { users: 2000, funding: 1000 } },
-                    { text: "Launch a paid pre-order immediately", next: "revenue_trickle", perk: "Viral Audience", effect: { users: 500, funding: 15000, stress: 15 } }
-                ]
-            },
-            quit_now: {
-                title: "The Hunger Phase",
-                text: "Rent is due. You have no product yet, just mockups of the Picao AI interface. You need runway to survive the next three months.",
-                options: [
-                    { text: "Sell your car and downgrade your apartment", next: "focus", effect: { funding: 15000, stress: 20 } },
-                    { text: "Take a massive personal loan", next: "debt_spiral", effect: { funding: 40000, stress: 55 } }
-                ]
-            },
-            moonlight: {
-                title: "The Exhaustion Grind",
-                text: "You are coding at 3 AM. The Picao AI prototype is working, but your day-job boss is noticing your extreme fatigue. You are called into a meeting.",
-                options: [
-                    { text: "Confess you are building a startup", next: "fired", effect: { stress: 20 } },
-                    { text: "Lie, drink more coffee, and push through", next: "stealth", effect: { users: 50, stress: 35 } }
-                ]
-            },
-            stealth: {
-                title: "Level 2: The Alpha Build",
-                text: "You survived the month. Picao AI is functional. Time to show your all-in-one AI platform to the world.",
-                options: [
-                    { text: "Launch directly on Product Hunt", next: "ph_launch", effect: { lvl: 1, stress: 15 } },
-                    { text: "Apply to Y Combinator", next: "yc_interview", effect: { stress: 10 } }
-                ]
-            },
-            focus: {
-                title: "Level 2: Intense Focus",
-                text: "You are broke but entirely focused. The Picao AI unified workspace is faster than anything on the market.",
-                options: [
-                    { text: "Launch directly on Product Hunt", next: "ph_launch", effect: { lvl: 1, stress: 15 } },
-                    { text: "Quietly invite 500 beta testers", next: "beta", effect: { users: 500, stress: -5, lvl: 1 } }
-                ]
-            },
-            yc_interview: {
-                title: "The Accelerator Pitch",
-                text: "You land an interview with a top accelerator. They love the vision for Picao AI, but they grill you on your technical capabilities.",
-                options: [
-                    { text: "Rely on your Co-Founder to answer the technicals", next: "yc_accepted", reqPerk: "Co-Founder", effect: { stress: -10 } },
-                    { text: "Stumble through the technical architecture yourself", next: "yc_rejected", effect: { stress: 25 } }
-                ]
-            },
-            yc_accepted: {
-                title: "Backed by the Best",
-                text: "You got in! They invest $500k. You now have access to a massive network of founders and mentors.",
-                options: [
-                    { text: "Use the network to secure enterprise pilots", next: "enterprise_pivot", perk: "Top Tier Backing", effect: { funding: 500000, lvl: 1 } },
-                    { text: "Use the funds to scale the consumer product", next: "ph_launch", perk: "Top Tier Backing", effect: { funding: 500000, lvl: 1 } }
-                ]
-            },
-            yc_rejected: {
-                title: "Rejection",
-                text: "They passed. They said the AI space is too crowded. You have to prove them wrong by bootstrapping.",
-                options: [
-                    { text: "Launch Picao AI independently", next: "ph_launch", effect: { stress: 10 } }
-                ]
-            },
-            beta: {
-                title: "Finding Product-Market Fit",
-                text: "Creators are obsessed with Picao AI. They are launching their own projects 10x faster using your tools. But server costs are spiking.",
-                options: [
-                    { text: "Enforce a strict paywall ($30/mo)", next: "revenue_trickle", effect: { funding: 10000, stress: 10 } },
-                    { text: "Keep it free to maximize user growth", next: "api_crisis", effect: { users: 8000, stress: 20, funding: -4000 } }
-                ]
-            },
-            ph_launch: {
-                title: "Market Validation",
-                text: "Picao AI is #1 Product of the Day! Thousands of creators sign up simultaneously. Your database is redlining.",
-                options: [
-                    { text: "Scale servers instantly (Expensive)", next: "api_crisis", effect: { funding: -12000, users: 15000, stress: 30 } },
-                    { text: "Implement a waitlist to control load", next: "hype", effect: { users: 6000, stress: -5, funding: 2000 } }
-                ]
-            },
-            revenue_trickle: {
-                title: "Ramen Profitability",
-                text: "Picao AI is generating reliable MRR. You are profitable, but growth is linear. A competitor is raising millions.",
-                options: [
-                    { text: "Pitch to VCs for a $2M Seed Round", next: "seed_round", effect: { stress: 20 } },
-                    { text: "Leverage your audience to market for free", next: "marketing_push", reqPerk: "Viral Audience", effect: { users: 20000 } },
-                    { text: "Stay small, automate, and enjoy life", next: "lifestyle_biz", effect: { stress: -30, funding: 100000 } }
-                ]
-            },
-            api_crisis: {
-                title: "The OpenAI Billing Crisis",
-                text: "Disaster. Your users generated too much content. You receive a $45,000 API bill that auto-drafts in 48 hours.",
-                options: [
-                    { text: "Call in favors from your accelerator network", next: "crisis_averted", reqPerk: "Top Tier Backing", effect: { stress: -20 } },
-                    { text: "Beg angel investors for emergency cash", next: "seed_round", effect: { stress: 45 } },
-                    { text: "Shut down the heavy AI features temporarily", next: "slow_burn", effect: { users: -5000, stress: 20 } }
-                ]
-            },
-            crisis_averted: {
-                title: "Saved by the Network",
-                text: "Your accelerator connects you with Microsoft, who grants Picao AI $300,000 in free Azure/OpenAI credits.",
-                options: [
-                    { text: "Resume hyper-growth", next: "marketing_push", perk: "Cloud Credits", effect: { users: 25000, funding: 300000 } }
-                ]
-            },
-            hype: {
-                title: "The FOMO Effect",
-                text: "The waitlist worked. Picao AI is the most anticipated tool of the year. A prominent VC flies you out to Sand Hill Road.",
-                options: [
-                    { text: "Sign the Term Sheet ($3M Seed)", next: "series_a", effect: { funding: 3000000, users: 30000, lvl: 1 } },
-                    { text: "Walk away. Keep 100% equity.", next: "slow_burn", effect: { stress: 15 } }
-                ]
-            },
-            seed_round: {
-                title: "Level 3: Venture Backed",
-                text: "You secured capital. But the VC demands a board seat and aggressive month-over-month growth. They want you to hire fast.",
-                options: [
-                    { text: "Hire a massive engineering team", next: "scaling_hell", effect: { funding: -800000, users: 60000, lvl: 1, stress: 35 } },
-                    { text: "Delegate hiring to your Co-Founder", next: "smart_scaling", reqPerk: "Co-Founder", effect: { funding: -400000, users: 50000, stress: 5, lvl: 1 } }
-                ]
-            },
-            smart_scaling: {
-                title: "Efficient Operations",
-                text: "Your Co-Founder builds an elite, lean team. Picao AI scales beautifully without burning through all your cash.",
-                options: [
-                    { text: "Prepare for Series A", next: "series_a", effect: { users: 100000, funding: 200000 } }
-                ]
-            },
-            slow_burn: {
-                title: "The Indie Hacker Path",
-                text: "You rejected the VC treadmill. You build features slowly, listen to creators, and charge a premium. You hit $80k/MRR.",
-                options: [
-                    { text: "Automate everything and step back", next: "lifestyle_biz", effect: { stress: -50, funding: 800000 } },
-                    { text: "Reinvest all profits to fight larger rivals", next: "competitor_threat", effect: { users: 25000, stress: 25 } }
-                ]
-            },
-            marketing_push: {
-                title: "Going Mainstream",
-                text: "Picao AI is everywhere. But a massive Tech Giant just announced a 'new' feature that perfectly clones your unified workspace.",
-                options: [
-                    { text: "Pivot to Enterprise B2B software", next: "enterprise_pivot", effect: { users: -40000, funding: 800000, stress: 20 } },
-                    { text: "Rally your community and fight back publicly", next: "competitor_threat", effect: { users: 150000, stress: 45 } }
-                ]
-            },
-            competitor_threat: {
-                title: "David vs Goliath",
-                text: "The Tech Giant is trying to crush you with a free clone. Your community loves your indie spirit, but the pressure is immense.",
-                options: [
-                    { text: "Sell Picao AI to their biggest rival", next: "exit_small", effect: { funding: 22000000, stress: -60 } },
-                    { text: "Out-innovate them. Push to Series B.", next: "scaling_hell", effect: { stress: 50, users: 300000 } }
-                ]
-            },
-            enterprise_pivot: {
-                title: "Corporate Life",
-                text: "You lost the indie creators, but gained Fortune 500 clients. The software is stable, the contracts are huge, but the work is uninspiring.",
-                options: [
-                    { text: "Sell to a Private Equity firm", next: "exit_small", effect: { funding: 35000000, stress: -40 } },
-                    { text: "Keep grinding B2B sales", next: "scaling_hell", effect: { funding: 8000000, stress: 40 } }
-                ]
-            },
-            series_a: {
-                title: "The Scaling Wall",
-                text: "You are at Level 4. Adobe offers to acquire Picao AI for $40M. Your VC board members vote NO. They want a billion-dollar outcome. Do you listen?",
-                options: [
-                    { text: "Listen to investors (Push for Unicorn)", next: "scaling_hell", effect: { stress: 45, funding: 10000000, users: 500000 } },
-                    { text: "Force the sale and cash out", next: "exit_small", effect: { funding: 40000000, stress: -80 } }
-                ]
-            },
-            scaling_hell: {
-                title: "Level 5: Hypergrowth",
-                text: "Picao AI has millions of users. You manage 200 employees. You are fighting lawsuits, server fires, and board politics simultaneously.",
-                options: [
-                    { text: "Push for the IPO", next: "unicorn_ipo", effect: { funding: 1500000000, stress: 60 } },
-                    { text: "Step down as CEO and take a Chairman role", next: "exit_small", effect: { funding: 80000000, stress: -90 } }
+                    { text: "Hire the '10x Ex-Googler' (Brilliant but arrogant)", next: "alpha_build", perk: "Toxic Co-Founder", effect: { funding: -5000, stress: 15 } },
+                    { text: "Partner with your best friend (Loyal but junior coder)", next: "alpha_build", perk: "Loyal Friend", effect: { stress: -10 } },
+                    { text: "Go completely Solo (Keep 100% equity)", next: "alpha_build", perk: "Solo Founder", effect: { stress: 20 } }
                 ]
             },
 
-            // GAME OVER NODES
-            debt_spiral: { title: "Bankrupt", text: "The high-interest loans crushed you. You ran out of cash before Picao AI ever saw the light of day. Game Over.", options: [{ text: "Restart Journey", next: "start", reset: true }] },
-            fired: { title: "IP Lawsuit", text: "Your employer fired you and claimed the IP for Picao AI belonged to them because you coded it on a company laptop. Game Over.", options: [{ text: "Restart Journey", next: "start", reset: true }] },
-            
-            // WIN NODES
-            exit_small: { 
-                title: "The Acquisition Exit", 
-                text: "Picao AI was successfully acquired. You are incredibly wealthy. You step away from the stress, buy property, and finally rest. But part of you wonders what could have been...", 
-                options: [{ text: "Start a New Company", next: "start", reset: true }] 
+            // --- PHASE 2: THE BUILD & FAMILY CONFLICT ---
+            alpha_build: {
+                title: "The Alpha Release",
+                text: "Months pass. The Picao AI workspace is functional but unpolished. You have a choice: Launch quietly to test the waters, or do a massive marketing push?",
+                options: [
+                    { text: "Soft launch to a private Discord of creators", next: "family_crisis", effect: { users: 500, funding: 2000, stress: 5, lvl: "Seed" } },
+                    { text: "Launch on Product Hunt with a flashy video", next: "family_crisis", effect: { users: 8000, stress: 20, lvl: "Seed" } }
+                ]
             },
-            lifestyle_biz: { 
-                title: "The Indie Dream", 
-                text: "You win! You own 100% of a highly profitable, automated AI platform. You work 4 hours a day, travel the world, and answer to absolutely nobody.", 
-                options: [{ text: "Start a New Company", next: "start", reset: true }] 
+            family_crisis: {
+                title: "The Work-Life Collision",
+                text: "It's your partner's milestone birthday dinner tonight. Suddenly, Picao AI's text-generation API goes down. Thousands of users are getting error screens.",
+                options: [
+                    { text: "Skip the dinner. Fix the servers.", next: "cofounder_fallout", perk: "Strained Relationship", removePerk: "Supportive Partner", effect: { users: 2000, stress: 25 } },
+                    { text: "Go to the dinner. Let the servers burn.", next: "cofounder_fallout", perk: "Family First", effect: { users: -3000, stress: -15, funding: -2000 } }
+                ]
             },
-            unicorn_ipo: { 
-                title: "UNICORN STATUS", 
-                text: "YOU DID IT. You rang the bell at the NYSE. Picao AI fundamentally changed how the internet creates content. You are a billionaire.", 
-                options: [{ text: "Start a New Company", next: "start", reset: true }] 
+
+            // --- PHASE 3: CONSEQUENCES OF YOUR TEAM ---
+            cofounder_fallout: {
+                title: "Internal Friction",
+                text: "The dust settles, but internal issues arise based on who you chose to build Picao AI with.",
+                options: [
+                    { text: "[Requires: Toxic Co-Founder] They threaten to leave and steal the code.", next: "lawsuit_threat", reqPerk: "Toxic Co-Founder", effect: { stress: 30 } },
+                    { text: "[Requires: Loyal Friend] Their messy code caused the crash. Massive Tech Debt.", next: "tech_debt", reqPerk: "Loyal Friend", effect: { stress: 15 } },
+                    { text: "[Requires: Solo Founder] You are doing everything yourself. Severe insomnia.", next: "solo_burnout", reqPerk: "Solo Founder", effect: { stress: 25 } },
+                    { text: "Push through the pain and seek venture capital.", next: "vc_pitch", effect: { stress: 10 } }
+                ]
+            },
+            lawsuit_threat: {
+                title: "The Hostile Takeover",
+                text: "Your '10x' co-founder demands 60% equity or they will open-source Picao AI's proprietary algorithms.",
+                options: [
+                    { text: "Buy them out with company cash", next: "vc_pitch", effect: { funding: -15000, stress: 10 }, removePerk: "Toxic Co-Founder" },
+                    { text: "Fight them in court", next: "vc_pitch", effect: { stress: 40, funding: -5000 } }
+                ]
+            },
+            tech_debt: {
+                title: "The Spaghetti Code",
+                text: "Picao AI is growing, but adding new features takes weeks because the codebase is a disaster.",
+                options: [
+                    { text: "Pause growth for 2 months to rewrite everything", next: "vc_pitch", effect: { users: -1000, stress: 10, funding: -5000 } },
+                    { text: "Keep patching it and pray", next: "vc_pitch", perk: "Tech Debt", effect: { users: 5000, stress: 25 } }
+                ]
+            },
+            solo_burnout: {
+                title: "Atlas Holding the Sky",
+                text: "You are the CEO, CTO, and Customer Support. You are answering tickets at 4 AM.",
+                options: [
+                    { text: "Hire an expensive agency to help", next: "vc_pitch", effect: { funding: -12000, stress: -20 } },
+                    { text: "Automate support using your own AI", next: "vc_pitch", effect: { users: 2000, stress: 15 } }
+                ]
+            },
+
+            // --- PHASE 4: THE CROSSROADS ---
+            vc_pitch: {
+                title: "The Sand Hill Road Pitch",
+                text: "Picao AI has traction. Sequoia Capital offers you a $3 Million Series A. But they want you to pivot entirely away from creators and focus strictly on B2B Enterprise.",
+                options: [
+                    { text: "Take the money. Pivot to Enterprise.", next: "enterprise_grind", effect: { funding: 3000000, lvl: "Series A", stress: 20 } },
+                    { text: "Reject them. Stay true to the creators.", next: "indie_struggle", effect: { stress: 15 } }
+                ]
+            },
+            enterprise_grind: {
+                title: "The Corporate Pivot",
+                text: "You have millions in the bank, but you spend your days in boring Zoom calls with compliance officers. The soul of Picao AI feels lost.",
+                options: [
+                    { text: "[Requires: Strained Relationship] Your partner files for divorce due to your absence.", next: "divorce_crisis", reqPerk: "Strained Relationship", effect: { stress: 45, funding: -1000000 } },
+                    { text: "Double down on sales. Push for Series B.", next: "series_b", effect: { users: 50000, funding: 2000000, stress: 25 } },
+                    { text: "Accept a buyout offer from Microsoft.", next: "win_corporate", effect: { funding: 45000000, stress: -50 } }
+                ]
+            },
+            indie_struggle: {
+                title: "Bootstrapped Resilience",
+                text: "You rejected the VCs. You are building for the creators. Growth is slower, but margins are incredible. A major tech giant clones Picao AI.",
+                options: [
+                    { text: "[Requires: Tech Debt] Your servers crash under the competition. You lose.", next: "lose_competition", reqPerk: "Tech Debt", effect: { stress: 50 } },
+                    { text: "Rally your loyal community to fight back", next: "series_b", effect: { users: 150000, stress: 30, funding: 500000 } },
+                    { text: "Stop growing. Optimize for a lifestyle business.", next: "win_indie", effect: { stress: -40, funding: 800000 } }
+                ]
+            },
+            divorce_crisis: {
+                title: "The Ultimatum",
+                text: "The papers are signed. You have all the money in the world, but your house is empty. The board is demanding your attention for the next quarter.",
+                options: [
+                    { text: "Bury yourself entirely in the work.", next: "series_b", perk: "Pending Divorce", removePerk: "Strained Relationship", effect: { stress: 20, funding: 1000000 } }
+                ]
+            },
+
+            // --- PHASE 5: THE ENDGAME ---
+            series_b: {
+                title: "The Final Push",
+                text: "Picao AI is a behemoth. You have 200 employees. The stress is ungodly, but you are on the verge of a historic IPO. Do you ring the bell?",
+                options: [
+                    { text: "Ring the IPO Bell (Go Public)", next: "win_ipo", effect: { funding: 2000000000, stress: 50, lvl: "IPO" } },
+                    { text: "Step down as CEO and preserve your sanity", next: "win_corporate", effect: { funding: 85000000, stress: -80 } }
+                ]
+            },
+
+            // --- GAME OVER STATES (Handled smoothly, no alerts) ---
+            lose_burnout: {
+                title: "CRITICAL FAILURE: BURNOUT",
+                text: "Your vision fades to black. You pushed yourself past the physical limit. You wake up in a hospital. While you were recovering, the board replaced you, and Picao AI was sold for parts. Take care of your mental health.",
+                options: [{ text: "Restart Timeline", next: "start", reset: true }]
+            },
+            lose_bankrupt: {
+                title: "CRITICAL FAILURE: BANKRUPTCY",
+                text: "The runway is gone. AWS shuts off the servers. The Slack channel goes dead. Picao AI is officially defunct. You have to update your LinkedIn to 'Looking for new opportunities.'",
+                options: [{ text: "Restart Timeline", next: "start", reset: true }]
+            },
+            lose_competition: {
+                title: "CRUSHED BY THE GIANT",
+                text: "Because of your tech debt and lack of funding, you couldn't adapt when the massive tech giant cloned your product. Your users migrated to the free alternative. Picao AI dies a slow death.",
+                options: [{ text: "Restart Timeline", next: "start", reset: true }]
+            },
+
+            // --- WIN STATES ---
+            win_corporate: {
+                title: "THE ACQUISITION EXIT 💰",
+                text: "You sold Picao AI. You walk away with generational wealth. You buy a house in the hills and finally sleep for 12 hours a night. You succeeded, but you're no longer the captain of the ship.",
+                options: [{ text: "Found a New Startup", next: "start", reset: true }]
+            },
+            win_indie: {
+                title: "THE INDIE DREAM 🌴",
+                text: "You maintained total control. Picao AI is highly profitable and fully automated. You work 4 hours a day, travel with your family, and answer to absolutely no one. You won the game of life.",
+                options: [{ text: "Found a New Startup", next: "start", reset: true }]
+            },
+            win_ipo: {
+                title: "UNICORN STATUS 🦄",
+                text: "You ring the bell at the NYSE. Confetti falls. Picao AI is a publicly traded phenomenon that changed the creator economy forever. You are a billionaire. The stress was temporary; the legacy is forever.",
+                options: [{ text: "Found a New Startup", next: "start", reset: true }]
             }
         };
+
+        function formatFunding(num) {
+            if (num >= 1000000000) return (num / 1000000000).toFixed(1) + 'B';
+            if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+            return num.toLocaleString();
+        }
 
         function updateGame(nodeKey) {
             const node = story[nodeKey];
             const contentArea = document.getElementById('content-area');
             
-            // Fade out animation reset
+            // Re-trigger fade animation
             contentArea.classList.remove('animate-fade');
-            void contentArea.offsetWidth; // trigger reflow
+            void contentArea.offsetWidth; 
             contentArea.classList.add('animate-fade');
 
-            // Handle Resets
-            if (node.options[0].reset) {
-                state = { funding: 0, stress: 0, level: 1, users: 0, perks: [] };
+            // Handle Hard Resets
+            if (node.options && node.options[0].reset) {
+                state = { funding: 0, stress: 0, level: "Pre-Seed", users: 0, perks: [] };
             }
 
-            // Update Text
+            // Render Text
             document.getElementById('node-title').innerText = node.title;
             document.getElementById('text').innerText = node.text;
             
@@ -399,51 +420,51 @@
 
             node.options.forEach(opt => {
                 const btn = document.createElement('button');
+                btn.className = 'choice-btn';
                 
-                // Format the effect preview text
+                // Format Effect Preview
                 let previewText = "";
                 if(opt.effect) {
                     let changes = [];
                     if(opt.effect.funding) changes.push(`${opt.effect.funding > 0 ? '+' : ''}$${Math.abs(opt.effect.funding)}`);
                     if(opt.effect.users) changes.push(`${opt.effect.users > 0 ? '+' : ''}${Math.abs(opt.effect.users)} Users`);
                     if(opt.effect.stress) changes.push(`${opt.effect.stress > 0 ? '+' : ''}${opt.effect.stress}% Stress`);
-                    previewText = `<span class="effect-preview">[${changes.join(' | ')}]</span>`;
+                    if(changes.length > 0) previewText = `<span class="effect-preview">[${changes.join(' | ')}]</span>`;
                 }
 
-                // Check for required perks
+                // Handle Prerequisites (Locked options)
                 const isLocked = opt.reqPerk && !state.perks.includes(opt.reqPerk);
                 
                 if (isLocked) {
-                    btn.innerHTML = `<span><span class="locked-text">Locked: Requires [${opt.reqPerk}]</span><br><span style="color: #71717a">${opt.text}</span></span>`;
+                    btn.innerHTML = `<div><span class="locked-text">Locked: Requires [${opt.reqPerk}]</span><br><span style="color: #71717a; font-size: 0.95rem;">${opt.text}</span></div>`;
                     btn.disabled = true;
                 } else {
-                    let perkAddText = opt.perk ? `<br><span style="font-size: 0.8rem; color: #10b981;">+ Gains Perk: [${opt.perk}]</span>` : '';
-                    btn.innerHTML = `<span>${opt.text}${perkAddText}</span> ${previewText}`;
+                    let perkAddText = opt.perk ? `<br><span style="font-size: 0.75rem; color: var(--accent); margin-top: 4px; display: inline-block;">+ Trait Acquired: [${opt.perk}]</span>` : '';
+                    let perkRemoveText = opt.removePerk ? `<br><span style="font-size: 0.75rem; color: var(--danger); margin-top: 4px; display: inline-block;">- Trait Lost: [${opt.removePerk}]</span>` : '';
+                    
+                    btn.innerHTML = `<div>${opt.text}${perkAddText}${perkRemoveText}</div> ${previewText}`;
                     
                     btn.onclick = () => {
+                        // Apply Effects
                         if (opt.effect) {
                             state.funding += (opt.effect.funding || 0);
                             state.stress += (opt.effect.stress || 0);
-                            state.level += (opt.effect.lvl || 0);
+                            if(opt.effect.lvl) state.level = opt.effect.lvl;
                             state.users += (opt.effect.users || 0);
                             
                             if(state.stress < 0) state.stress = 0;
                             if(state.users < 0) state.users = 0;
                         }
 
-                        if (opt.perk && !state.perks.includes(opt.perk)) {
-                            state.perks.push(opt.perk);
-                        }
+                        // Apply Perks Add/Remove
+                        if (opt.perk && !state.perks.includes(opt.perk)) state.perks.push(opt.perk);
+                        if (opt.removePerk) state.perks = state.perks.filter(p => p !== opt.removePerk);
                         
-                        // Check for Game Over Triggers
-                        if (state.stress >= 100) {
-                            alert("BURNOUT. You collapsed from exhaustion. Picao AI folded while you recovered in the hospital. Take care of your mental health!");
-                            updateGame('start'); 
-                            state = { funding: 0, stress: 0, level: 1, users: 0, perks: [] };
-                        } else if (state.funding < -25000) {
-                             alert("BANKRUPT. You ran out of runway and AWS shut off the Picao AI servers. Game Over.");
-                             updateGame('start'); 
-                             state = { funding: 0, stress: 0, level: 1, users: 0, perks: [] };
+                        // Engine Check: Fail States
+                        if (state.stress >= 100 && !nodeKey.startsWith('lose_') && !nodeKey.startsWith('win_')) {
+                            updateGame('lose_burnout');
+                        } else if (state.funding < -30000 && !nodeKey.startsWith('lose_') && !nodeKey.startsWith('win_')) {
+                            updateGame('lose_bankrupt');
                         } else {
                             updateGame(opt.next);
                         }
@@ -452,30 +473,32 @@
                 btnBox.appendChild(btn);
             });
 
-            // Update UI Stats & Progress Bars
-            document.getElementById('funding').innerText = state.funding.toLocaleString();
+            // Update UI Counters
+            document.getElementById('funding').innerText = formatFunding(state.funding);
             document.getElementById('users').innerText = state.users.toLocaleString();
             document.getElementById('stress').innerText = state.stress;
             document.getElementById('lvl').innerText = state.level;
             
-            // Update Perks UI
+            // Render Inventory / Traits
             const perksList = document.getElementById('perks-list');
             if (state.perks.length === 0) {
-                perksList.innerHTML = "None";
+                perksList.innerHTML = "<span style='opacity: 0.5'>Clean Slate</span>";
             } else {
-                perksList.innerHTML = state.perks.map(p => `<span class="perk-badge">${p}</span>`).join('');
+                perksList.innerHTML = state.perks.map(p => {
+                    let styleClass = 'perk-neutral';
+                    if (positivePerks.includes(p)) styleClass = 'perk-positive';
+                    if (negativePerks.includes(p)) styleClass = 'perk-negative';
+                    return `<span class="perk-badge ${styleClass}">${p}</span>`;
+                }).join('');
             }
 
-            // Update Stress Bar Color
+            // Animate Stress Bar
             const stressFill = document.getElementById('stress-fill');
             stressFill.style.width = `${Math.min(state.stress, 100)}%`;
-            if (state.stress < 50) stressFill.style.background = "#10b981"; 
-            else if (state.stress < 80) stressFill.style.background = "#f59e0b"; 
-            else stressFill.style.background = "#ef4444"; 
+            if (state.stress < 40) stressFill.style.background = "var(--success)"; 
+            else if (state.stress < 75) stressFill.style.background = "#f59e0b"; 
+            else stressFill.style.background = "var(--danger)"; 
         }
-
-        // Initialize
-        updateGame('start');
     </script>
 </body>
 </html>
