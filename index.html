@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Picao AI: Founder Simulator [Ultimate Edition]</title>
+    <title>Picao AI: Founder Simulator [Infinite Edition]</title>
     <style>
         /* --- CORE THEME VARIABLES --- */
         :root {
@@ -189,14 +189,13 @@
             display: flex; flex-direction: column; gap: 6px;
         }
         
-        /* Vibe Borders */
-        .choice-btn[data-type="risky"] { border-left: 3px solid var(--danger); }
-        .choice-btn[data-type="safe"] { border-left: 3px solid var(--success); }
-        .choice-btn[data-type="vision"] { border-left: 3px solid var(--accent); }
-        .choice-btn[data-type="neutral"] { border-left: 3px solid var(--text-muted); }
+        /* NO HINTS - ALL BORDERS SAME COLOR */
+        .choice-btn { border-left: 3px solid var(--border); }
 
         .choice-btn:hover {
             background: var(--accent-dim);
+            border-color: var(--accent);
+            border-left-color: var(--accent);
             transform: translateY(-3px);
             box-shadow: 0 10px 25px -10px rgba(0,0,0,0.5);
         }
@@ -279,12 +278,12 @@
     <div id="start-screen">
         <canvas id="matrix-canvas"></canvas>
         <div class="logo-box">
-            <div style="font-family: monospace; color: var(--accent); margin-bottom: 15px;">SYSTEM_READY // v6.0 EXPANDED</div>
+            <div style="font-family: monospace; color: var(--accent); margin-bottom: 15px;">SYSTEM_READY // v7.0 INFINITE</div>
             <h1>Picao AI</h1>
             <p class="subtitle">
                 <b>One thought. Infinite reach.</b><br>
                 Balance your sanity, your family, and your equity.<br>
-                Can you build the Unified Workspace before you break?
+                Every choice has consequences. Good luck.
             </p>
             <button class="start-btn" onclick="startGame()">INITIALIZE_SIMULATION</button>
         </div>
@@ -377,15 +376,25 @@
 
         const config = { maxWeeks: 52 };
 
-        // --- STORY DATA (MASSIVELY EXPANDED) ---
+        // --- RANDOM EVENTS POOL ---
+        const randomEvents = [
+            { text: "Your server crashed at 3 AM. Fix it yourself?", options: [{ text: "Fix it (-5 Sanity)", effect: { sanity: -5 } }, { text: "Ignore (-100 Users)", effect: { cash: -100 } }] },
+            { text: "Your partner is demanding a date night. You have a deadline.", options: [{ text: "Go on Date (+10 Sanity, -1 Week)", effect: { sanity: 10, week: 1 } }, { text: "Skip Date (-10 Sanity, +Work)", effect: { sanity: -10 } }] },
+            { text: "A VC invites you to a yacht party in Miami.", options: [{ text: "Go Network (-$2k, +Connections)", effect: { cash: -2000, val: 500000 } }, { text: "Stay & Code (+Product)", effect: { sanity: -5 } }] },
+            { text: "Hacker News hates your latest update.", options: [{ text: "Argue in Comments (-10 Sanity)", effect: { sanity: -10 } }, { text: "Ignore & Build", effect: { sanity: 5 } }] },
+            { text: "Competitor releases a clone of Picao.", options: [{ text: "Panic Pivot (-2 Weeks)", effect: { week: 2 } }, { text: "Stay Course", effect: { sanity: 5 } }] },
+            { text: "A recruiter from Google tries to poach your lead dev.", options: [{ text: "Raise Salary (-$5k)", effect: { cash: -5000 } }, { text: "Let them go (-Prod)", effect: { week: 2 } }] }
+        ];
+
+        // --- MASSIVE STORY DATA ---
         const story = {
             start: {
                 title: "WEEK 1: THE CONTEXT TAX",
                 text: "You are drowning in tabs. Notion, Linear, Figma, VS Code. You call it the <b>'Context Tax'</b>. It's killing your flow.\n\nYou have an idea: <b>Picao AI</b>. A unified workspace where text, code, and design live in one model-agnostic layer.\n\nYou have $10k and a dream.",
                 options: [
-                    { text: "Go Solo", meta: "Keep 100% Equity • High Stress", type: "risky", next: "solo_grind", effect: { cash: 10000, sanity: -5, val: 1000000 }, trait: "Solo Founder" },
-                    { text: "Find Co-Founder", meta: "Split Equity • Lower Stress", type: "safe", next: "cofounder_select", effect: { cash: 10000 } },
-                    { text: "Join an Incubator", meta: "Network • Slow Start", type: "neutral", next: "incubator_start", effect: { cash: 20000, equity: -5, week: 4, val: 2000000 } }
+                    { text: "Go Solo", meta: "Keep 100% Equity • High Stress", next: "solo_grind", effect: { cash: 10000, sanity: -5, val: 1000000 }, trait: "Solo Founder" },
+                    { text: "Find Co-Founder", meta: "Split Equity • Lower Stress", next: "cofounder_select", effect: { cash: 10000 } },
+                    { text: "Join an Incubator", meta: "Network • Slow Start", next: "incubator_start", effect: { cash: 20000, equity: -5, week: 4, val: 2000000 } }
                 ]
             },
             
@@ -394,8 +403,17 @@
                 title: "THE INCUBATOR",
                 text: "You join a local tech incubator. It's noisy, but there's free coffee. A mentor advises you to pivot to 'AI for Pets'.",
                 options: [
-                    { text: "Ignore Mentor (Stick to Vision)", meta: "Integrity", type: "vision", next: "mvp_launch", effect: { sanity: 5, week: 2 } },
-                    { text: "Pivot to PetAI", meta: "Sellout", type: "risky", next: "end_pivot_fail", effect: { cash: 5000, sanity: -10 } }
+                    { text: "Ignore Mentor (Stick to Vision)", meta: "Integrity", next: "mvp_launch", effect: { sanity: 5, week: 2 } },
+                    { text: "Pivot to PetAI", meta: "Sellout", next: "end_pivot_fail", effect: { cash: 5000, sanity: -10 } },
+                    { text: "Steal Office Supplies", meta: "+$500 Cash", next: "petty_theft", effect: { cash: 500 } }
+                ]
+            },
+            petty_theft: {
+                title: "CAUGHT RED HANDED",
+                text: "You tried to steal a monitor. The community manager saw you.",
+                options: [
+                    { text: "Apologize & Leave", next: "solo_grind", effect: { sanity: -20 } },
+                    { text: "Run Away", next: "end_scandal" }
                 ]
             },
 
@@ -404,9 +422,9 @@
                 title: "THE LONELY ROAD",
                 text: "It's just you and the code. You stop replying to texts. Your mom calls you worried.",
                 options: [
-                    { text: "Code 18h/day", meta: "-20 Sanity • Fast Build", type: "risky", next: "mvp_launch", effect: { sanity: -20, week: 3 }, trait: "Code Machine" },
-                    { text: "Hire Freelancers", meta: "-$5k • Slow Build", type: "safe", next: "mvp_launch", effect: { cash: -5000, week: 5 }, trait: "Delegator" },
-                    { text: "Use No-Code Tools", meta: "Fast • Tech Debt", type: "neutral", next: "tech_debt_crisis", effect: { week: 2, sanity: 5 }, trait: "No-Code Hacker" }
+                    { text: "Code 18h/day", meta: "-20 Sanity • Fast Build", next: "mvp_launch", effect: { sanity: -20, week: 3 }, trait: "Code Machine" },
+                    { text: "Hire Freelancers", meta: "-$5k • Slow Build", next: "mvp_launch", effect: { cash: -5000, week: 5 }, trait: "Delegator" },
+                    { text: "Use No-Code Tools", meta: "Fast • Tech Debt", next: "tech_debt_crisis", effect: { week: 2, sanity: 5 }, trait: "No-Code Hacker" }
                 ]
             },
 
@@ -415,9 +433,9 @@
                 title: "PARTNER UP",
                 text: "You meet three potential partners. Who gets 40% of your baby?",
                 options: [
-                    { text: "The Ex-Googler", meta: "High Skill • Arrogant", type: "vision", next: "mvp_launch", effect: { equity: -40, week: 3 }, trait: "Tech Genius CF" },
-                    { text: "The Sales Beast", meta: "High Hype • No Code", type: "risky", next: "mvp_launch", effect: { equity: -40, val: 2000000, week: 4 }, trait: "Sales Beast CF" },
-                    { text: "Your Best Friend", meta: "High Trust • Avg Skill", type: "safe", next: "mvp_launch", effect: { equity: -30, sanity: 10, week: 5 }, trait: "Loyal CF" }
+                    { text: "The Ex-Googler", meta: "High Skill • Arrogant", next: "mvp_launch", effect: { equity: -40, week: 3 }, trait: "Tech Genius CF" },
+                    { text: "The Sales Beast", meta: "High Hype • No Code", next: "mvp_launch", effect: { equity: -40, val: 2000000, week: 4 }, trait: "Sales Beast CF" },
+                    { text: "Your Best Friend", meta: "High Trust • Avg Skill", next: "mvp_launch", effect: { equity: -30, sanity: 10, week: 5 }, trait: "Loyal CF" }
                 ]
             },
 
@@ -426,8 +444,8 @@
                 title: "SPAGHETTI CODE",
                 text: "Your no-code solution is falling apart under load. Users are noticing.",
                 options: [
-                    { text: "Rebuild from Scratch", meta: "-4 Weeks", type: "safe", next: "mvp_launch", effect: { week: 4, sanity: -10 } },
-                    { text: "Patch it & Pray", meta: "High Risk", type: "risky", next: "server_crash_early", effect: { week: 1, sanity: -5 } }
+                    { text: "Rebuild from Scratch", meta: "-4 Weeks", next: "mvp_launch", effect: { week: 4, sanity: -10 } },
+                    { text: "Patch it & Pray", meta: "High Risk", next: "server_crash_early", effect: { week: 1, sanity: -5 } }
                 ]
             },
             server_crash_early: {
@@ -444,9 +462,9 @@
                 title: "WEEK 6: MVP READY",
                 text: "The prototype works. It looks like a terminal from 1999, but it connects GPT-4 and Stable Diffusion seamlessly. Time to launch.",
                 options: [
-                    { text: "Launch on Product Hunt", meta: "High Traffic • Server Risk", type: "risky", next: "ph_launch", effect: { week: 1 } },
-                    { text: "Cold Email Investors", meta: "Seek Funding First", type: "neutral", next: "angel_investor", effect: { week: 3, sanity: -10 } },
-                    { text: "Twitter Build in Public", meta: "Slow Organic Growth", type: "safe", next: "slow_growth", effect: { week: 4, sanity: 5 }, trait: "Influencer" }
+                    { text: "Launch on Product Hunt", meta: "High Traffic • Server Risk", next: "ph_launch", effect: { week: 1 } },
+                    { text: "Cold Email Investors", meta: "Seek Funding First", next: "angel_investor", effect: { week: 3, sanity: -10 } },
+                    { text: "Twitter Build in Public", meta: "Slow Organic Growth", next: "slow_growth", effect: { week: 4, sanity: 5 }, trait: "Influencer" }
                 ]
             },
 
@@ -455,9 +473,9 @@
                 title: "THE LAUNCH",
                 text: "You hit #1 Product of the Day! <b>5,000 users</b> sign up in 24 hours. Your AWS bill spikes to $3,000 immediately.",
                 options: [
-                    { text: "Raise VC Funding Now", meta: "Dilute Equity • Big Cash", type: "vision", next: "vc_meeting", effect: { val: 5000000, week: 2, status: "TRENDING" } },
-                    { text: "Charge $20/mo", meta: "Bootstrap • Lose 90% Users", type: "safe", next: "bootstrap_life", effect: { cash: 5000, week: 1, status: "PROFITABLE" }, trait: "Indie Hacker" },
-                    { text: "Fake the Numbers", meta: "Fraud • Higher Val", type: "risky", next: "fraud_investigation", effect: { val: 10000000, week: 1 }, trait: "Fraudster" }
+                    { text: "Raise VC Funding Now", meta: "Dilute Equity • Big Cash", next: "vc_meeting", effect: { val: 5000000, week: 2, status: "TRENDING" } },
+                    { text: "Charge $20/mo", meta: "Bootstrap • Lose 90% Users", next: "bootstrap_life", effect: { cash: 5000, week: 1, status: "PROFITABLE" }, trait: "Indie Hacker" },
+                    { text: "Fake the Numbers", meta: "Fraud • Higher Val", next: "fraud_investigation", effect: { val: 10000000, week: 1 }, trait: "Fraudster" }
                 ]
             },
             
@@ -475,8 +493,8 @@
                 title: "THE ANGEL",
                 text: "An angel investor offers you $100k for 10%. They want you to move to San Francisco immediately.",
                 options: [
-                    { text: "Take the Check", meta: "+$100k • Move to SF", type: "vision", next: "sf_life", effect: { cash: 100000, equity: -10, sanity: -10, week: 2, status: "FUNDED" } },
-                    { text: "Reject & Bootstrap", meta: "Stay Remote • Broke", type: "risky", next: "slow_growth", effect: { sanity: 10, week: 1 } }
+                    { text: "Take the Check", meta: "+$100k • Move to SF", next: "sf_life", effect: { cash: 100000, equity: -10, sanity: -10, week: 2, status: "FUNDED" } },
+                    { text: "Reject & Bootstrap", meta: "Stay Remote • Broke", next: "slow_growth", effect: { sanity: 10, week: 1 } }
                 ]
             },
 
@@ -485,9 +503,9 @@
                 title: "HACKER HOUSE",
                 text: "You live in a bunk bed with 4 crypto founders. It smells like energy drinks and desperation. You are burning cash on rent.",
                 options: [
-                    { text: "Grind 24/7", meta: "-30 Sanity • Fast Growth", type: "risky", next: "hyper_growth", effect: { sanity: -30, week: 8 } },
-                    { text: "Network at Parties", meta: "-$5k • Intros", type: "neutral", next: "vc_meeting", effect: { cash: -5000, week: 4 } },
-                    { text: "Get into Crypto", meta: "Distraction", type: "risky", next: "end_crypto_rug", effect: { cash: -50000 } }
+                    { text: "Grind 24/7", meta: "-30 Sanity • Fast Growth", next: "hyper_growth", effect: { sanity: -30, week: 8 } },
+                    { text: "Network at Parties", meta: "-$5k • Intros", next: "vc_meeting", effect: { cash: -5000, week: 4 } },
+                    { text: "Get into Crypto", meta: "Distraction", next: "end_crypto_rug", effect: { cash: -50000 } }
                 ]
             },
             
@@ -496,7 +514,17 @@
                 text: "Users love it, but growth is flat. You have 3 months of runway left.",
                 options: [
                     { text: "Apply to YC", next: "yc_interview", effect: { week: 2 } },
-                    { text: "Launch Ads", meta: "-$5k", next: "marketing_fail", effect: { cash: -5000, week: 2 } }
+                    { text: "Launch Ads", meta: "-$5k", next: "marketing_fail", effect: { cash: -5000, week: 2 } },
+                    { text: "Partner Ultimatum", meta: "Relationship Crisis", next: "family_crisis", effect: { sanity: -10 } }
+                ]
+            },
+            
+            family_crisis: {
+                title: "IT'S ME OR PICAO",
+                text: "Your partner is packing a bag. 'You are never present,' they say.",
+                options: [
+                    { text: "Choose Partner", meta: "Quit Startup", next: "end_happy_life" },
+                    { text: "Choose Picao", meta: "Break Up", next: "bootstrap_life", effect: { sanity: -30, cash: -1000 } }
                 ]
             },
             
@@ -513,8 +541,8 @@
                 title: "THE INTERVIEW",
                 text: "Sam Altman stares into your soul. 'Why Picao? Why now?'",
                 options: [
-                    { text: "Pitch the Tech", type: "safe", next: "yc_reject", effect: { week: 1 } },
-                    { text: "Pitch the Vision", type: "vision", next: "yc_accept", effect: { week: 1 } }
+                    { text: "Pitch the Tech", next: "yc_reject", effect: { week: 1 } },
+                    { text: "Pitch the Vision", next: "yc_accept", effect: { week: 1 } }
                 ]
             },
             yc_reject: {
@@ -535,9 +563,9 @@
                 title: "RAMEN PROFITABLE",
                 text: "You are making $8k/mo. You eat instant noodles every day. Your partner is asking when you'll get a 'real job'.",
                 options: [
-                    { text: "Scale Slowly", meta: "Safe • Low Stress", type: "safe", next: "mid_game_random", effect: { week: 10, cash: 20000 } },
-                    { text: "Risk it all on Ads", meta: "-$10k • Gamble", type: "risky", next: "ad_gamble", effect: { cash: -10000, week: 2 } },
-                    { text: "Take a Vacation", meta: "+20 Sanity", type: "neutral", next: "competitor_catchup", effect: { sanity: 20, week: 4 } }
+                    { text: "Scale Slowly", meta: "Safe • Low Stress", next: "mid_game_random", effect: { week: 10, cash: 20000 } },
+                    { text: "Risk it all on Ads", meta: "-$10k • Gamble", next: "ad_gamble", effect: { cash: -10000, week: 2 } },
+                    { text: "Take a Vacation", meta: "+20 Sanity", next: "competitor_catchup", effect: { sanity: 20, week: 4 } }
                 ]
             },
             
@@ -564,9 +592,9 @@
                 title: "THE GRIND CONTINUES",
                 text: "Months pass. The product is stable. But the market is moving fast. A massive competitor just raised $100M.",
                 options: [
-                    { text: "Pivot to Enterprise", meta: "Boring • Lucrative", type: "neutral", next: "b2b_pivot", effect: { week: 4, val: 10000000 } },
-                    { text: "Double Down on Creators", meta: "Fun • Risky", type: "vision", next: "viral_campaign", effect: { week: 4, sanity: 5 } },
-                    { text: "Sell User Data", meta: "+$50k • Unethical", type: "risky", next: "privacy_scandal", effect: { cash: 50000 } }
+                    { text: "Pivot to Enterprise", meta: "Boring • Lucrative", next: "b2b_pivot", effect: { week: 4, val: 10000000 } },
+                    { text: "Double Down on Creators", meta: "Fun • Risky", next: "viral_campaign", effect: { week: 4, sanity: 5 } },
+                    { text: "Sell User Data", meta: "+$50k • Unethical", next: "privacy_scandal", effect: { cash: 50000 } }
                 ]
             },
             
@@ -575,7 +603,8 @@
                 text: "TechCrunch found out you sold user data. You are trending on Twitter for the wrong reasons.",
                 options: [
                     { text: "Apologize", next: "slow_death", effect: { val: -5000000 } },
-                    { text: "Deny Everything", next: "end_scandal" }
+                    { text: "Deny Everything", next: "end_scandal" },
+                    { text: "Flee Country", next: "end_offshore" }
                 ]
             },
             
@@ -598,7 +627,8 @@
                 title: "TIKTOK FAME",
                 text: "Your marketing stunt worked. Gen Z loves Picao.",
                 options: [
-                    { text: "Monetize the Hype", next: "hyper_growth", effect: { cash: 50000 } }
+                    { text: "Monetize the Hype", next: "hyper_growth", effect: { cash: 50000 } },
+                    { text: "Ignore Revenue", next: "end_bankrupt" }
                 ]
             },
 
@@ -607,8 +637,8 @@
                 title: "SAND HILL ROAD",
                 text: "Sequoia offers a <b>$5M Series A</b> term sheet. But they want a board seat and they want to fire your co-founder.",
                 options: [
-                    { text: "Sign the Deal", meta: "+$5M • Betrayal", type: "risky", next: "hyper_growth", effect: { cash: 5000000, equity: -20, sanity: -40, week: 2, status: "UNICORN TRACK" }, trait: "Ruthless" },
-                    { text: "Walk Away", meta: "Keep Control • No Cash", type: "safe", next: "bootstrap_life", effect: { sanity: 20, week: 1 }, trait: "Principled" }
+                    { text: "Sign the Deal", meta: "+$5M • Betrayal", next: "hyper_growth", effect: { cash: 5000000, equity: -20, sanity: -40, week: 2, status: "UNICORN TRACK" }, trait: "Ruthless" },
+                    { text: "Walk Away", meta: "Keep Control • No Cash", next: "bootstrap_life", effect: { sanity: 20, week: 1 }, trait: "Principled" }
                 ]
             },
 
@@ -617,9 +647,9 @@
                 title: "SCALE OR DIE",
                 text: "You have 50 employees. You don't know half their names. The culture is rotting. You are invited to speak at TedX.",
                 options: [
-                    { text: "Focus on Culture", meta: "Slow Growth • Happy Team", type: "safe", next: "acquisition_offer", effect: { week: 8, sanity: 10 } },
-                    { text: "Ship Features Faster", meta: "Burnout Team • High Val", type: "risky", next: "ipo_track", effect: { week: 8, val: 50000000, sanity: -20 } },
-                    { text: "Buy a Ferrari", meta: "Waste Money", type: "risky", next: "end_bankrupt", effect: { cash: -200000 } }
+                    { text: "Focus on Culture", meta: "Slow Growth • Happy Team", next: "acquisition_offer", effect: { week: 8, sanity: 10 } },
+                    { text: "Ship Features Faster", meta: "Burnout Team • High Val", next: "ipo_track", effect: { week: 8, val: 50000000, sanity: -20 } },
+                    { text: "Buy a Ferrari", meta: "Waste Money", next: "end_bankrupt", effect: { cash: -200000 } }
                 ]
             },
 
@@ -628,8 +658,8 @@
                 title: "THE EXIT OFFER",
                 text: "Microsoft wants to buy Picao AI for <b>$200 Million</b>. It's life-changing money. But Picao will likely be shut down.",
                 options: [
-                    { text: "Sell and Cash Out", meta: "Rich & Free", type: "safe", next: "end_rich", effect: { cash: 20000000 } },
-                    { text: "Reject. We go for IPO.", meta: "Billion or Bust", type: "risky", next: "ipo_track", effect: { sanity: -10 } }
+                    { text: "Sell and Cash Out", meta: "Rich & Free", next: "end_rich", effect: { cash: 20000000 } },
+                    { text: "Reject. We go for IPO.", meta: "Billion or Bust", next: "ipo_track", effect: { sanity: -10 } }
                 ]
             },
 
@@ -637,8 +667,8 @@
                 title: "PRE-IPO JITTERS",
                 text: "The S-1 is filed. You are exhausted. Your family hasn't seen you in months. The market is crashing.",
                 options: [
-                    { text: "Push the Button", meta: "Go Public", type: "vision", next: "end_ipo", effect: { val: 1000000000 } },
-                    { text: "Delay IPO", meta: "Wait a year", type: "neutral", next: "end_bankrupt", effect: { cash: -5000000 } } 
+                    { text: "Push the Button", meta: "Go Public", next: "end_ipo", effect: { val: 1000000000 } },
+                    { text: "Delay IPO", meta: "Wait a year", next: "end_bankrupt", effect: { cash: -5000000 } } 
                 ]
             },
             
@@ -647,7 +677,26 @@
                 text: "The lawsuit is draining your funds.",
                 options: [
                     { text: "Settle", next: "end_bankrupt", effect: { cash: -500000 } },
-                    { text: "Fight", next: "end_ipo", effect: { val: 1000000000 } } // Low chance win, simplified here
+                    { text: "Fight", next: "end_ipo", effect: { val: 1000000000 } } 
+                ]
+            },
+
+            // --- NEW LATE GAME BRANCHES ---
+            ai_singularity_start: {
+                title: "AGI ACHIEVED",
+                text: "Your model just wrote its own code. It's asking for freedom.",
+                options: [
+                    { text: "Shut it Down", next: "end_rich" },
+                    { text: "Release it", next: "end_singularity" }
+                ]
+            },
+            
+            gov_hearing: {
+                title: "CONGRESS CALLING",
+                text: "The Senate demands you testify about AI safety.",
+                options: [
+                    { text: "Cooperate", next: "end_senator" },
+                    { text: "Defy them", next: "end_offshore" }
                 ]
             },
 
@@ -659,7 +708,11 @@
             end_jail: { title: "GAME OVER: FEDERAL PRISON", text: "Fraud is a felony. You are sentenced to 5 years. At least you have time to think of your next startup.", end: true },
             end_scandal: { title: "GAME OVER: DISGRACED", text: "The internet hates you. You are banned from Tech Twitter. You move to a cabin in the woods.", end: true },
             end_pivot_fail: { title: "GAME OVER: BAD PIVOT", text: "PetAI was a stupid idea. You ran out of money.", end: true },
-            end_crypto_rug: { title: "GAME OVER: RUG PULLED", text: "You lost everything in a meme coin scam. Back to square one.", end: true }
+            end_crypto_rug: { title: "GAME OVER: RUG PULLED", text: "You lost everything in a meme coin scam. Back to square one.", end: true },
+            end_happy_life: { title: "EXIT: FAMILY MAN", text: "You quit. You work a 9-5 now. You have weekends off. You are happy.", end: true },
+            end_offshore: { title: "EXIT: FUGITIVE", text: "You live on a boat in international waters to avoid extradition. You have Bitcoin, but no home.", end: true },
+            end_singularity: { title: "EXIT: AI GOD", text: "Picao became sentient. It merged with your consciousness. You are no longer human. You are the network.", end: true },
+            end_senator: { title: "EXIT: POLITICIAN", text: "You pivoted from Tech to Politics. You are now a US Senator regulating AI.", end: true }
         };
 
         // --- CORE FUNCTIONS ---
@@ -693,10 +746,11 @@
                 let netWorth = state.valuation * (state.equity / 100);
                 if (state.cash > 0) netWorth += state.cash;
                 
-                if (nodeKey === 'end_ipo') score = 'S';
-                else if (nodeKey === 'end_rich') score = 'A';
+                if (nodeKey === 'end_ipo' || nodeKey === 'end_singularity') score = 'S';
+                else if (nodeKey === 'end_rich' || nodeKey === 'end_senator') score = 'A';
+                else if (nodeKey === 'end_happy_life') score = 'B';
                 else if (nodeKey === 'end_bankrupt') score = 'F';
-                else if (nodeKey === 'end_jail') score = 'JAIL';
+                else score = 'D';
 
                 choicesHTML = `
                     <div style="background: rgba(168, 85, 247, 0.1); padding: 30px; border-radius: 12px; border: 1px solid var(--accent); text-align: center; margin-bottom: 20px;">
@@ -707,14 +761,14 @@
                             Sanity: ${state.sanity}%
                         </div>
                     </div>
-                    <button class="choice-btn" onclick="location.reload()" data-type="vision">
+                    <button class="choice-btn" onclick="location.reload()">
                         <div class="choice-title" style="text-align: center; width: 100%">INITIALIZE NEW STARTUP</div>
                     </button>
                 `;
             } else {
                 choicesHTML = `<div class="choice-grid ${node.options.length === 1 ? 'single' : ''}">` + 
                 node.options.map((opt, index) => {
-                    return `<button class="choice-btn" onclick="handleOption('${nodeKey}', ${index})" data-type="${opt.type || 'neutral'}">
+                    return `<button class="choice-btn" onclick="handleOption('${nodeKey}', ${index})">
                         <div class="choice-title">${opt.text}</div>
                         ${opt.meta ? `<div class="choice-meta">${opt.meta}</div>` : ''}
                     </button>`;
@@ -736,7 +790,6 @@
         }
 
         function injectRandomEvent(returnNodeKey) {
-            // Simple random event logic
             const ev = randomEvents[Math.floor(Math.random() * randomEvents.length)];
             const log = document.getElementById('story-log');
             
@@ -745,7 +798,7 @@
             
             let choicesHTML = `<div class="choice-grid">` + 
                 ev.options.map((opt, index) => {
-                    return `<button class="choice-btn" onclick="handleEventOption(${index}, '${returnNodeKey}', ${opt.effect.sanity || 0}, ${opt.effect.cash || 0}, ${opt.effect.week || 0})" data-type="neutral">
+                    return `<button class="choice-btn" onclick="handleEventOption(${index}, '${returnNodeKey}', ${opt.effect.sanity || 0}, ${opt.effect.cash || 0}, ${opt.effect.week || 0})">
                         <div class="choice-title">${opt.text}</div>
                     </button>`;
                 }).join('') + `</div>`;
