@@ -2,38 +2,42 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Picao AI: Founder Simulator v3.0</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Picao AI: Founder Simulator [Ultimate Edition]</title>
     <style>
         /* --- THEME VARIABLES --- */
         :root {
             /* DARK MODE (DEFAULT) */
             --bg-color: #050505;
-            --card-bg: rgba(24, 24, 27, 0.65);
+            --card-bg: rgba(24, 24, 27, 0.75);
             --text-main: #fafafa;
             --text-muted: #a1a1aa;
-            --border: rgba(255, 255, 255, 0.08);
+            --border: rgba(255, 255, 255, 0.1);
             --accent: #a855f7;
             --accent-glow: rgba(168, 85, 247, 0.4);
+            --danger: #ef4444;
+            --success: #10b981;
             --btn-bg: rgba(255, 255, 255, 0.03);
             --btn-hover: rgba(168, 85, 247, 0.1);
             --scanline: rgba(0, 0, 0, 0.5);
             --grid: rgba(255, 255, 255, 0.03);
+            --particle-opacity: 0.3;
         }
 
         /* LIGHT MODE OVERRIDES */
         [data-theme="light"] {
             --bg-color: #f8fafc;
-            --card-bg: rgba(255, 255, 255, 0.85);
+            --card-bg: rgba(255, 255, 255, 0.9);
             --text-main: #0f172a;
             --text-muted: #64748b;
-            --border: rgba(0, 0, 0, 0.08);
-            --accent: #9333ea; /* Slightly darker purple for contrast */
-            --accent-glow: rgba(147, 51, 234, 0.25);
+            --border: rgba(0, 0, 0, 0.1);
+            --accent: #7c3aed;
+            --accent-glow: rgba(124, 58, 237, 0.2);
             --btn-bg: #ffffff;
             --btn-hover: #f3e8ff;
-            --scanline: rgba(255, 255, 255, 0); /* No scanlines in light mode */
-            --grid: rgba(0, 0, 0, 0.03);
+            --scanline: rgba(0, 0, 0, 0.02);
+            --grid: rgba(0, 0, 0, 0.04);
+            --particle-opacity: 0.15;
         }
 
         body {
@@ -50,11 +54,10 @@
             min-height: 100vh;
             margin: 0;
             overflow: hidden;
-            transition: background-color 0.5s ease;
+            transition: background-color 0.4s ease;
         }
 
         /* --- VISUAL EFFECTS --- */
-        /* CRT Scanline Overlay */
         .scanlines {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(to bottom, var(--scanline) 50%, transparent 50%);
@@ -64,7 +67,6 @@
             opacity: 0.15;
         }
 
-        /* Floating Particles */
         .particles {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none;
@@ -73,109 +75,169 @@
         }
         .particle {
             position: absolute;
-            width: 4px; height: 4px;
+            width: 3px; height: 3px;
             background: var(--accent);
             border-radius: 50%;
-            opacity: 0.3;
+            opacity: var(--particle-opacity);
             animation: float 20s infinite linear;
         }
         @keyframes float {
             0% { transform: translateY(100vh) scale(0); opacity: 0; }
-            50% { opacity: 0.5; }
+            50% { opacity: var(--particle-opacity); }
             100% { transform: translateY(-100px) scale(1); opacity: 0; }
         }
 
-        /* --- UI COMPONENTS --- */
-        #game-container {
-            width: 100%; max-width: 950px;
-            padding: 50px;
-            background: var(--card-bg);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            border: 1px solid var(--border);
-            border-radius: 24px;
-            box-shadow: 0 0 80px -20px var(--accent-glow), 
-                        inset 0 0 0 1px rgba(255,255,255,0.05);
+        /* Shake Animation for Stress/Bad Events */
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            70% { transform: translate(3px, 1px) rotate(-1deg); }
+            80% { transform: translate(-1px, -1px) rotate(1deg); }
+            90% { transform: translate(1px, 2px) rotate(0deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        }
+        .shake-screen { animation: shake 0.5s; }
+
+        /* Glitch Text Effect */
+        .glitch-text {
             position: relative;
-            z-index: 10;
-            transition: all 0.5s ease;
+            color: var(--text-main);
+        }
+        .glitch-text::before, .glitch-text::after {
+            content: attr(data-text);
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        }
+        .glitch-text::before {
+            left: 2px; text-shadow: -1px 0 var(--danger); clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim 5s infinite linear alternate-reverse;
+        }
+        .glitch-text::after {
+            left: -2px; text-shadow: -1px 0 var(--accent); clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim2 5s infinite linear alternate-reverse;
+        }
+        @keyframes glitch-anim {
+            0% { clip: rect(32px, 9999px, 18px, 0); }
+            20% { clip: rect(89px, 9999px, 86px, 0); }
+            40% { clip: rect(10px, 9999px, 3px, 0); }
+            60% { clip: rect(65px, 9999px, 2px, 0); }
+            80% { clip: rect(19px, 9999px, 44px, 0); }
+            100% { clip: rect(56px, 9999px, 98px, 0); }
+        }
+        @keyframes glitch-anim2 {
+            0% { clip: rect(12px, 9999px, 88px, 0); }
+            20% { clip: rect(45px, 9999px, 12px, 0); }
+            40% { clip: rect(6px, 9999px, 66px, 0); }
+            60% { clip: rect(90px, 9999px, 4px, 0); }
+            80% { clip: rect(23px, 9999px, 77px, 0); }
+            100% { clip: rect(3px, 9999px, 34px, 0); }
         }
 
-        /* Theme Toggle */
+        /* --- UI CONTAINER --- */
+        #game-container {
+            width: 100%; max-width: 900px;
+            height: 90vh; /* Fixed height for better layout */
+            display: flex; flex-direction: column;
+            padding: 40px;
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px -10px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255,255,255,0.05);
+            position: relative;
+            z-index: 10;
+            transition: all 0.4s ease;
+            overflow: hidden;
+        }
+
         .theme-switch {
             position: absolute; top: 25px; right: 25px;
             background: var(--btn-bg);
             border: 1px solid var(--border);
             color: var(--text-muted);
-            padding: 8px 16px;
+            padding: 8px 14px;
             border-radius: 20px;
             cursor: pointer;
             font-size: 0.8rem;
-            display: flex; align-items: center; gap: 8px;
+            display: flex; align-items: center; gap: 6px;
             transition: all 0.2s ease;
+            z-index: 50;
         }
-        .theme-switch:hover { color: var(--accent); border-color: var(--accent); }
+        .theme-switch:hover { color: var(--accent); border-color: var(--accent); background: var(--btn-hover); }
 
         /* HUD */
         .hud {
             display: grid; grid-template-columns: repeat(4, 1fr);
-            gap: 20px; margin-bottom: 30px;
+            gap: 15px; margin-bottom: 25px;
             padding-bottom: 20px;
             border-bottom: 1px solid var(--border);
         }
         .hud-item { display: flex; flex-direction: column; }
         .hud-label { 
-            font-size: 0.7rem; color: var(--text-muted); 
-            text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 6px;
+            font-size: 0.65rem; color: var(--text-muted); 
+            text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 5px;
             font-weight: 600;
         }
         .hud-value { 
             font-family: 'Courier New', monospace; font-weight: 700; 
-            font-size: 1.4rem; color: var(--text-main); 
+            font-size: 1.2rem; color: var(--text-main); 
         }
-        .hud-value.highlight { color: var(--accent); text-shadow: 0 0 15px var(--accent-glow); }
+        .hud-value.highlight { color: var(--accent); text-shadow: 0 0 10px var(--accent-glow); }
 
-        /* Progress Bars */
+        /* Bars */
         .bar-container {
-            height: 6px; background: rgba(128,128,128,0.1);
-            border-radius: 3px; overflow: hidden; margin-bottom: 8px;
+            height: 4px; background: rgba(128,128,128,0.1);
+            border-radius: 2px; overflow: hidden; margin-top: 5px;
         }
-        .bar-fill { height: 100%; transition: width 0.5s ease; }
-        #stress-fill { background: #ef4444; }
-        #equity-fill { background: var(--accent); }
+        .bar-fill { height: 100%; transition: width 0.4s ease; }
+        #stress-fill { background: var(--danger); }
+        #family-fill { background: var(--success); }
 
-        /* Inventory */
+        /* Content Area */
+        #content-wrapper {
+            flex-grow: 1;
+            display: flex; flex-direction: column;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
         #traits-box {
-            display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 40px;
-            padding: 15px; background: rgba(128,128,128,0.05); border-radius: 12px;
+            display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px;
+            min-height: 32px;
         }
         .trait {
-            font-size: 0.75rem; padding: 4px 10px; border-radius: 6px;
+            font-size: 0.7rem; padding: 4px 8px; border-radius: 4px;
             border: 1px solid var(--border);
-            font-family: monospace; letter-spacing: 0.5px;
-            animation: popIn 0.3s ease;
+            font-family: monospace;
+            animation: fadeIn 0.3s ease;
         }
-        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        .trait.good { color: #10b981; border-color: rgba(16,185,129,0.3); background: rgba(16,185,129,0.05); }
-        .trait.bad { color: #ef4444; border-color: rgba(239,68,68,0.3); background: rgba(239,68,68,0.05); }
+        .trait.good { color: var(--success); border-color: rgba(16,185,129,0.3); background: rgba(16,185,129,0.05); }
+        .trait.bad { color: var(--danger); border-color: rgba(239,68,68,0.3); background: rgba(239,68,68,0.05); }
+        .trait.neutral { color: var(--accent); border-color: rgba(168,85,247,0.3); background: rgba(168,85,247,0.05); }
 
         /* Story Text */
         #story-text {
-            font-size: 1.25rem; line-height: 1.7; color: var(--text-muted);
-            margin-bottom: 40px; min-height: 100px; font-weight: 300;
+            font-size: 1.15rem; line-height: 1.6; color: var(--text-muted);
+            margin-bottom: 30px; min-height: 80px; font-weight: 300;
+            white-space: pre-line;
         }
-        .cursor { display: inline-block; width: 2px; height: 1.2em; background: var(--accent); animation: blink 1s infinite; vertical-align: text-bottom; margin-left: 2px; }
+        .cursor { display: inline-block; width: 2px; height: 1.1em; background: var(--accent); animation: blink 1s infinite; vertical-align: text-bottom; margin-left: 2px; }
         @keyframes blink { 50% { opacity: 0; } }
 
         /* Choices */
-        .choices-grid { display: grid; gap: 15px; }
+        .choices-grid { display: grid; gap: 12px; margin-top: auto; }
         .choice-btn {
             background: var(--btn-bg);
             border: 1px solid var(--border);
             color: var(--text-main);
-            padding: 24px; border-radius: 12px;
+            padding: 18px 24px; border-radius: 10px;
             cursor: pointer; text-align: left;
-            transition: all 0.2s ease;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex; justify-content: space-between; align-items: center;
             position: relative; overflow: hidden;
         }
@@ -183,38 +245,59 @@
             transform: translateY(-2px);
             background: var(--btn-hover);
             border-color: var(--accent);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
         .choice-btn::before {
-            content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+            content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
             background: var(--accent); opacity: 0; transition: opacity 0.2s;
         }
         .choice-btn:hover::before { opacity: 1; }
         
-        .choice-meta { text-align: right; font-size: 0.8rem; color: var(--text-muted); font-family: monospace; }
-        .choice-main { font-weight: 500; font-size: 1.05rem; }
+        .choice-meta { text-align: right; font-size: 0.75rem; color: var(--text-muted); font-family: monospace; display: flex; gap: 8px; }
+        .choice-main { font-weight: 500; font-size: 0.95rem; }
 
-        /* Start Screen */
+        /* Start Overlay */
         #start-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--bg-color); z-index: 20;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            text-align: center; transition: opacity 0.8s ease;
+            text-align: center; transition: opacity 0.6s ease;
         }
         h1 { 
-            font-size: 3.5rem; margin: 0 0 20px 0; letter-spacing: -2px;
+            font-size: 3rem; margin: 0 0 15px 0; letter-spacing: -1.5px;
             background: linear-gradient(135deg, var(--text-main), var(--text-muted));
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
         .start-btn {
-            background: var(--accent); color: white; border: none;
-            padding: 18px 50px; font-size: 1.2rem; border-radius: 50px;
+            background: var(--text-main); color: var(--bg-color); border: none;
+            padding: 16px 40px; font-size: 1rem; border-radius: 50px;
             cursor: pointer; font-weight: 600; letter-spacing: 1px;
-            box-shadow: 0 0 30px var(--accent-glow);
+            box-shadow: 0 0 20px rgba(255,255,255,0.1);
             transition: all 0.3s ease;
+            margin-top: 30px;
         }
-        .start-btn:hover { transform: scale(1.05); box-shadow: 0 0 50px var(--accent-glow); }
+        .start-btn:hover { transform: scale(1.05); box-shadow: 0 0 40px var(--accent-glow); background: var(--accent); color: white; }
 
+        /* Ticker Tape */
+        .ticker-wrap {
+            position: absolute; bottom: 0; left: 0; width: 100%; overflow: hidden; height: 30px;
+            background: rgba(0,0,0,0.2); border-top: 1px solid var(--border);
+            display: flex; align-items: center;
+        }
+        .ticker {
+            display: inline-block; white-space: nowrap; padding-left: 100%;
+            animation: ticker 30s linear infinite; font-family: monospace; font-size: 0.75rem; color: var(--text-muted);
+        }
+        @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            #game-container { padding: 20px; height: 100vh; border-radius: 0; }
+            .hud { grid-template-columns: 1fr 1fr; gap: 10px; }
+            h1 { font-size: 2.2rem; }
+            .choice-btn { padding: 15px; flex-direction: column; align-items: flex-start; gap: 5px; }
+            .choice-meta { text-align: left; }
+        }
     </style>
 </head>
 <body>
@@ -223,13 +306,14 @@
     <div class="particles" id="particles"></div>
 
     <div id="start-overlay">
-        <div style="margin-bottom: 20px; font-family: monospace; color: var(--accent); border: 1px solid var(--accent); padding: 5px 12px; border-radius: 20px;">NYC_ALPHA_v3.2</div>
+        <div style="margin-bottom: 20px; font-family: monospace; color: var(--accent); border: 1px solid var(--accent); padding: 4px 10px; border-radius: 20px; font-size: 0.8rem;">ULTIMATE EDITION v4.0</div>
         <h1>Picao AI</h1>
-        <p style="color: var(--text-muted); font-size: 1.2rem; max-width: 500px; margin-bottom: 40px; line-height: 1.6;">
-            Build the unified workspace. Defeat the "Context Tax".<br>
-            Manage your equity, sanity, and net worth.
+        <p style="color: var(--text-muted); font-size: 1.1rem; max-width: 400px; line-height: 1.5;">
+            The Unified Workspace Simulator.<br>
+            Balance Cash, Sanity, and Family.<br>
+            Don't let the stress break you.
         </p>
-        <button class="start-btn" onclick="initGame()">INITIALIZE WORKSPACE</button>
+        <button class="start-btn" onclick="initGame()">INITIALIZE STARTUP</button>
     </div>
 
     <div id="game-container" style="display:none; opacity:0;">
@@ -239,31 +323,34 @@
 
         <div class="hud">
             <div class="hud-item">
-                <span class="hud-label">Cash Runway</span>
-                <span class="hud-value" id="cash">$0</span>
+                <span class="hud-label">Runway</span>
+                <span class="hud-value highlight" id="cash">$0</span>
             </div>
             <div class="hud-item">
                 <span class="hud-label">Valuation</span>
-                <span class="hud-value highlight" id="valuation">$0</span>
+                <span class="hud-value" id="valuation">$0</span>
             </div>
             <div class="hud-item">
-                <span class="hud-label">Your Equity</span>
-                <span class="hud-value" id="equity">100%</span>
-                <div class="bar-container"><div class="bar-fill" id="equity-fill" style="width: 100%"></div></div>
+                <span class="hud-label">Sanity/Family</span>
+                <span class="hud-value" id="family">100%</span>
+                <div class="bar-container"><div class="bar-fill" id="family-fill" style="width: 100%"></div></div>
             </div>
             <div class="hud-item">
-                <span class="hud-label">Founder Stress</span>
+                <span class="hud-label">Stress Load</span>
                 <span class="hud-value" id="stress">0%</span>
                 <div class="bar-container"><div class="bar-fill" id="stress-fill" style="width: 0%"></div></div>
             </div>
         </div>
 
-        <div id="traits-box"></div>
-
-        <div id="story-area">
-            <h2 id="node-title" style="margin: 0 0 15px 0; color: var(--text-main);">Init...</h2>
+        <div id="content-wrapper">
+            <div id="traits-box"></div>
+            <h2 id="node-title" style="margin: 0 0 10px 0; color: var(--text-main); font-size: 1.4rem;">Init...</h2>
             <div id="story-text"></div>
             <div class="choices-grid" id="choices"></div>
+        </div>
+
+        <div class="ticker-wrap">
+            <div class="ticker" id="news-ticker">TechCrunch: Picao AI rumored to launch new feature... | NASDAQ up 2%... | VC Funding slows down in Q3... | New AI Regulation proposed in EU...</div>
         </div>
     </div>
 
@@ -272,21 +359,22 @@
         let state = {
             cash: 0,
             valuation: 0,
-            equity: 100, // Percentage
+            equity: 100,
             stress: 0,
-            users: 0,
+            family: 100, // New Metric: Work/Life Balance
             traits: [],
+            coFounder: null,
             history: []
         };
 
         // --- PARTICLE GENERATOR ---
         function createParticles() {
             const container = document.getElementById('particles');
-            for(let i=0; i<30; i++) {
+            for(let i=0; i<40; i++) {
                 let p = document.createElement('div');
                 p.className = 'particle';
                 p.style.left = Math.random() * 100 + 'vw';
-                p.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                p.style.animationDuration = (Math.random() * 10 + 15) + 's';
                 p.style.animationDelay = Math.random() * 5 + 's';
                 container.appendChild(p);
             }
@@ -315,7 +403,6 @@
             let i = 0;
             clearInterval(typeInterval);
             
-            // Add cursor
             const cursor = document.createElement('span');
             cursor.className = 'cursor';
             el.appendChild(cursor);
@@ -324,130 +411,162 @@
                 if (i < text.length) {
                     cursor.before(text.charAt(i));
                     i++;
+                    // Auto-scroll to bottom of text area
+                    document.getElementById('content-wrapper').scrollTop = document.getElementById('content-wrapper').scrollHeight;
                 } else {
                     clearInterval(typeInterval);
                     if(callback) callback();
                 }
-            }, 10); // Typing speed
+            }, 8); // Speed
         }
 
         // --- STORY DATA ---
         const nodes = {
             start: {
-                title: "Day 0: The Context Tax",
-                text: "You are a creator. You spend 4 hours a day switching between Notion, Canva, and ChatGPT. It's destroying your flow. You have an idea for Picao AI: A unified workspace where 'One Thought = Infinite Reach.' You have $5k in savings.",
+                title: "Day 0: The Idea",
+                text: "You are tired of the 'Context Tax'. Switching between apps is killing creativity. You have a vision for Picao AI: A unified workspace. You have $10k in savings and a supportive partner.",
                 options: [
-                    { text: "Code it yourself in the basement", next: "mvp_build", equity: 0, cash: 5000, val: 1000000, stress: 20, trait: "Solo Dev" },
-                    { text: "Apply to Y Combinator immediately", next: "yc_interview", stress: 10, val: 2000000 },
-                    { text: "Tweet the idea to see if it goes viral", next: "viral_test", stress: 5, val: 1000000 }
+                    { text: "Go Solo (Keep 100% Equity)", next: "solo_route", cash: 10000, val: 1000000, stress: 15, trait: "Solo Founder" },
+                    { text: "Find a Co-Founder", next: "cofounder_select", stress: 5, val: 1000000 }
                 ]
             },
-            viral_test: {
-                title: "Validation",
-                text: "Your thread 'The Context Tax is Killing Us' goes viral. 5,000 signups overnight. Investors are sliding into your DMs.",
+            cofounder_select: {
+                title: "Select Your Partner",
+                text: "Building alone is hard. Who do you bring on board?",
                 options: [
-                    { text: "Raise a Pre-Seed Round ($500k)", next: "seed_round", cash: 500000, equity: -10, val: 5000000, trait: "Hype Beast" },
-                    { text: "Bootstrap with Pre-Sales", next: "mvp_build", cash: 20000, stress: 30, trait: "Indie Hacker" }
+                    { text: "The Technical Genius (High Skill, Low Social)", next: "mvp_build", equity: -40, stress: 10, trait: "Tech Genius CF", cash: 10000 },
+                    { text: "The Sales Beast (Low Tech, High Hype)", next: "mvp_build", equity: -40, val: 2000000, trait: "Sales Beast CF", cash: 10000 },
+                    { text: "Your Best Friend (High Trust, Avg Skill)", next: "mvp_build", equity: -30, family: 10, trait: "Loyal CF", cash: 10000 }
+                ]
+            },
+            solo_route: {
+                title: "The Solo Grind",
+                text: "It's just you and the code. You work 18 hours a day. Your partner is worried.",
+                options: [
+                    { text: "Focus purely on Code", next: "mvp_build", stress: 25, family: -10, trait: "Code Machine" },
+                    { text: "Hire a Freelancer to help", next: "mvp_build", cash: -5000, stress: 10, trait: "Delegator" }
                 ]
             },
             mvp_build: {
-                title: "The MVP Grind",
-                text: "You're coding 16 hours a day. The 'Refraction Engine' works, but the UI is ugly. Users love the logic but hate the design.",
+                title: "Building the MVP",
+                text: "The prototype works. It unifies Notion-like docs with AI generation. But the UI is ugly.",
                 options: [
-                    { text: "Hire a premium Designer", next: "design_polish", cash: -10000, stress: -5, val: 2000000 },
-                    { text: "Keep shipping features (Ugly but functional)", next: "tech_debt_city", stress: 20, trait: "Function Over Form" }
+                    { text: "Ship it Ugly (Function > Form)", next: "early_users", stress: 10, val: 500000, trait: "Ugly But Works" },
+                    { text: "Polish the Design (Delay Launch)", next: "early_users", cash: -2000, stress: 5, val: 2000000, trait: "Design First" }
+                ]
+            },
+            early_users: {
+                title: "Traction",
+                text: "You have 500 users. They love the tool but hate the bugs. Investors are sniffing around.",
+                options: [
+                    { text: "Apply to Y Combinator", next: "yc_interview", stress: 10 },
+                    { text: "Bootstrap (Charge money immediately)", next: "bootstrap_grind", cash: 20000, stress: 15, family: -5, trait: "Indie Hacker" }
                 ]
             },
             yc_interview: {
                 title: "The Interview",
-                text: "Sam Altman asks: 'Why can't Google just build this?' You freeze for a second.",
+                text: "Sam Altman asks: 'Why you? Why now?'",
                 options: [
-                    { text: "Say: 'They are too slow. We are native.'", next: "yc_accepted", cash: 125000, equity: -7, val: 3000000, trait: "YC Alumni" },
-                    { text: "Say: 'Because our AI is model-agnostic.'", next: "yc_rejected", stress: 15 }
+                    { text: "Pitch the Tech: 'Our model routing is superior.'", next: "yc_outcome", chance: 0.6, win: "yc_accepted", lose: "yc_rejected" },
+                    { text: "Pitch the Vision: 'We are killing the Context Tax.'", next: "yc_outcome", chance: 0.8, win: "yc_accepted", lose: "yc_rejected" }
+                ]
+            },
+            yc_accepted: {
+                title: "Welcome to YC",
+                text: "You got in! $500k funding. The network is intense. You sleep 4 hours a night.",
+                options: [
+                    { text: "Scale Aggressively (Hire Team)", next: "series_a_push", cash: 500000, equity: -7, val: 10000000, stress: 20 },
+                    { text: "Stay Lean & Build", next: "series_a_push", cash: 500000, equity: -7, val: 8000000, stress: 10 }
                 ]
             },
             yc_rejected: {
                 title: "Rejection",
-                text: "They passed. 'Too niche,' they said. Fuel for the fire.",
+                text: "They said 'Too Niche'. It hurts.",
                 options: [
-                    { text: "Prove them wrong. Build faster.", next: "mvp_build", stress: 25, trait: "Chip on Shoulder" }
+                    { text: "Prove them wrong (Bootstrap)", next: "bootstrap_grind", stress: 20, trait: "Chip on Shoulder" }
                 ]
             },
-            yc_accepted: {
-                title: "Batch W26",
-                text: "You're in. The network is powerful. You launch on Demo Day.",
+            bootstrap_grind: {
+                title: "Ramen Profitability",
+                text: "You are making $5k/MRR. It pays the bills, barely. Your family misses you.",
                 options: [
-                    { text: "Raise a massive Seed Round ($3M)", next: "series_a_grind", cash: 3000000, equity: -20, val: 15000000 },
-                    { text: "Stay lean. Raise just enough ($500k)", next: "slow_growth", cash: 500000, equity: -10, val: 8000000 }
+                    { text: "Take a vacation (Restore Sanity)", next: "growth_spurt", family: 30, stress: -20, cash: -2000 },
+                    { text: "Grind harder (Code all weekend)", next: "growth_spurt", family: -20, stress: 25, val: 500000 }
                 ]
             },
-            seed_round: {
-                title: "Seed Funded",
-                text: "Money in the bank. Now the clock is ticking. You need 10k DAU (Daily Active Users) in 6 months.",
+            growth_spurt: {
+                title: "Viral Moment",
+                text: "A major influencer reviewed Picao. Traffic is spiking! Servers are melting.",
                 options: [
-                    { text: "Spend it on Ads", next: "marketing_burn", cash: -200000, stress: 10 },
-                    { text: "Hire a Rockstar Engineer", next: "product_market_fit", cash: -100000, stress: -10, trait: "10x Team" }
+                    { text: "Rewrite Backend (Stability)", next: "competitor_attack", cash: -5000, stress: 15, trait: "Robust Tech" },
+                    { text: "Ignore bugs, onboard everyone!", next: "competitor_attack", cash: 10000, stress: 30, trait: "Tech Debt" }
                 ]
             },
-            product_market_fit: {
-                title: "Product Market Fit",
-                text: "It's clicking. Creators are using Picao for 6 hours a day. Retention is 80%. Series A investors are knocking.",
+            series_a_push: {
+                title: "Series A Crunch",
+                text: "You need to show 10% MoM growth. You are burning cash fast.",
                 options: [
-                    { text: "Raise Series A ($15M)", next: "series_a_grind", cash: 15000000, equity: -15, val: 60000000 },
-                    { text: "Reject them. We are profitable.", next: "indie_paradise", trait: "Profit First" }
+                    { text: "Raise $10M Series A", next: "competitor_attack", cash: 10000000, equity: -15, val: 40000000, trait: "Venture Backed" },
+                    { text: "Pivot to Enterprise Sales", next: "competitor_attack", cash: 2000000, stress: 20, trait: "B2B Pivot" }
                 ]
             },
-            series_a_grind: {
-                title: "Scaling Pains",
-                text: "You have 50 employees. Half of them don't know your name. The culture is diluting. A competitor launches a clone.",
+            competitor_attack: {
+                title: "The Copycat",
+                text: "A massive tech giant released a feature that looks EXACTLY like Picao.",
                 options: [
-                    { text: "Acquire the competitor", next: "monopoly", cash: -5000000, val: 80000000, stress: 20 },
-                    { text: "Focus on Enterprise Sales", next: "b2b_pivot", stress: 30, trait: "Corporate suit" }
+                    { text: "Call them out on Twitter (War)", next: "endgame_setup", stress: 20, val: 1000000, trait: "Public Fighter" },
+                    { text: "Out-Innovate (Build faster)", next: "endgame_setup", stress: 30, cash: -50000, trait: "Innovator" }
                 ]
             },
-            monopoly: {
-                title: "The Unicorn Run",
-                text: "You crushed the competition. Picao is the standard. You are valued at $1 Billion.",
+            endgame_setup: {
+                title: "The Offer",
+                text: "You survived the war. Picao is a household name. You have an offer on the table.",
                 options: [
-                    { text: "IPO (Go Public)", next: "win_ipo", equity: -5, val: 1200000000 },
-                    { text: "Sell to Microsoft", next: "win_acquisition", val: 800000000 }
+                    { text: "Sell to Google ($200M)", next: "win_acquisition", val: 200000000 },
+                    { text: "IPO (Go Public)", next: "win_ipo", val: 1000000000, stress: 50 },
+                    { text: "Stay Independent (Lifestyle Business)", next: "win_indie", val: 50000000, family: 50 }
                 ]
             },
             
             // --- ENDINGS ---
-            win_ipo: {
-                title: "NASDAQ: PICO",
-                text: "You rang the bell. Confetti everywhere. You are the CEO of a public company. The Context Tax is dead.",
-                end: true
-            },
             win_acquisition: {
-                title: "The Exit",
-                text: "You sold. The wire transfer hit your account. You bought an island. Was it worth it?",
+                title: "EXIT: ACQUISITION",
+                text: "The wire hit. You are rich. You bought a house in Italy. The stress is gone, but so is your baby.",
                 end: true
             },
-            indie_paradise: {
-                title: "Indie King",
-                text: "You own 80% of a company making $10M profit a year. You work 20 hours a week. Pure freedom.",
-                end: true, val: 50000000
+            win_ipo: {
+                title: "EXIT: IPO",
+                text: "You rang the bell at NASDAQ. You are a billionaire. Picao is the standard. You are tired, but legendary.",
+                end: true
+            },
+            win_indie: {
+                title: "EXIT: INDIE KING",
+                text: "You rejected the billions to keep your soul. You make $10M/year profit, work 20 hours a week, and see your family every day.",
+                end: true
             },
             game_over_stress: {
-                title: "Burnout Collapse",
-                text: "You pushed too hard. Hospitalized for exhaustion. The board replaced you while you recovered.",
+                title: "FAILURE: BURNOUT",
+                text: "You collapsed. The board removed you. Picao was sold for parts. Health is wealth, and you went broke.",
                 end: true, val: 0
             },
             game_over_cash: {
-                title: "Bankrupt",
-                text: "Runway hits zero. Servers shut down. It was a good dream.",
+                title: "FAILURE: BANKRUPT",
+                text: "Runway hit zero. Everyone was fired. The Slack channel is silent. Game Over.",
                 end: true, val: 0
+            },
+            game_over_family: {
+                title: "FAILURE: DIVORCE",
+                text: "Your partner left. You won the business game but lost the life game. You sit in an empty mansion.",
+                end: true, val: 5000000
             }
         };
 
         // --- RANDOM EVENTS ---
-        const randomEvents = [
-            { text: "EVENT: Viral Tweet! +10k Users", cash: 0, val: 500000, stress: -5 },
-            { text: "EVENT: AWS Bill Spike! -$20k", cash: -20000, val: 0, stress: 10 },
-            { text: "EVENT: Co-Founder Drama. Stress Up.", cash: 0, val: 0, stress: 20 },
-            { text: "EVENT: Featured on TechCrunch.", cash: 0, val: 1000000, stress: 0 }
+        const events = [
+            { text: "⚠️ SERVER CRASH! Users angry.", stress: 15, family: -5 },
+            { text: "🎉 Viral Tweet! +$1M Valuation.", val: 1000000, stress: -5 },
+            { text: "❤️ Family Dinner. Sanity restored.", family: 15, stress: -10 },
+            { text: "📉 Market Crash. Valuation drops.", val: -500000, stress: 10 }
         ];
 
         // --- GAME LOGIC ---
@@ -456,27 +575,38 @@
             setTimeout(() => {
                 document.getElementById('start-overlay').style.display = 'none';
                 const container = document.getElementById('game-container');
-                container.style.display = 'block';
-                // Trigger reflow
+                container.style.display = 'flex';
                 void container.offsetWidth;
                 container.style.opacity = 1;
                 loadNode('start');
-            }, 800);
+            }, 600);
         }
 
         function loadNode(nodeKey) {
+            // Chance Logic for "yc_outcome" style nodes
+            if (nodeKey === 'yc_outcome') {
+                // Logic handled in previous step, usually we pass params. 
+                // Simplified: We don't have a robust engine here for 'chance' in the ID.
+                // Fixing: The button click handler handles chance.
+            }
+
             const node = nodes[nodeKey];
             
-            // Random Event Trigger (20% chance if not start/end)
+            // Random Event Trigger (25% chance)
+            let eventText = "";
             if (nodeKey !== 'start' && !node.end && Math.random() < 0.25) {
-                const event = randomEvents[Math.floor(Math.random() * randomEvents.length)];
-                state.cash += event.cash;
-                state.valuation += event.val;
-                state.stress += event.stress;
+                const ev = events[Math.floor(Math.random() * events.length)];
+                state.stress += (ev.stress || 0);
+                state.family += (ev.family || 0);
+                state.valuation += (ev.val || 0);
                 updateHUD();
-                // We show the event as a toast or append to text, here we just append logic
-                // For simplicity in this structure, we'll flash it in the next text render
-                node.text = `[${event.text}]<br><br>` + node.text;
+                eventText = `<span style="color:var(--accent); font-weight:bold;">[EVENT] ${ev.text}</span>\n\n`;
+                
+                // Shake screen on bad event
+                if((ev.stress || 0) > 10) {
+                    document.body.classList.add('shake-screen');
+                    setTimeout(() => document.body.classList.remove('shake-screen'), 500);
+                }
             }
 
             document.getElementById('node-title').innerText = node.title;
@@ -487,8 +617,7 @@
             choicesBox.style.opacity = 0;
 
             // Type text
-            typeText(node.text, () => {
-                // Render choices after typing
+            typeText(eventText + node.text, () => {
                 choicesBox.style.opacity = 1;
                 
                 if (node.end) {
@@ -502,42 +631,51 @@
                     
                     let meta = [];
                     if(opt.cash) meta.push((opt.cash > 0 ? '+' : '') + formatMoney(opt.cash));
+                    if(opt.family) meta.push((opt.family > 0 ? '+' : '') + opt.family + '% Sanity');
                     if(opt.equity) meta.push(opt.equity + '% Equity');
-                    if(opt.stress) meta.push(opt.stress + '% Stress');
                     
                     btn.innerHTML = `
                         <span class="choice-main">${opt.text}</span>
                         <span class="choice-meta">${meta.join(' | ')}</span>
                     `;
                     
-                    btn.onclick = () => makeChoice(opt);
+                    btn.onclick = () => handleChoice(opt);
                     choicesBox.appendChild(btn);
                 });
             });
         }
 
-        function makeChoice(opt) {
-            // Apply effects
+        function handleChoice(opt) {
+            // Handle Chance mechanics
+            let nextNode = opt.next;
+            if (opt.chance) {
+                nextNode = Math.random() < opt.chance ? opt.win : opt.lose;
+            }
+
+            // Apply Stats
             if(opt.cash) state.cash += opt.cash;
-            if(opt.valuation) state.valuation = opt.val || (state.valuation + (opt.val || 0)); // simple logic
-            if(opt.val && !opt.valuation) state.valuation = opt.val; // Hard set if provided
+            if(opt.val) state.valuation = (state.valuation || 0) + opt.val;
             if(opt.equity) state.equity += opt.equity;
             if(opt.stress) state.stress += opt.stress;
+            if(opt.family) state.family += opt.family;
             if(opt.trait) addTrait(opt.trait);
 
-            // Clamp values
-            if(state.stress < 0) state.stress = 0;
-            if(state.equity < 0) state.equity = 0;
+            // Clamp
+            state.stress = Math.max(0, Math.min(100, state.stress));
+            state.family = Math.max(0, Math.min(100, state.family));
+            state.equity = Math.max(0, state.equity);
 
             updateHUD();
 
             // Check Fail States
             if (state.stress >= 100) {
                 loadNode('game_over_stress');
-            } else if (state.cash < 0 && state.valuation > 0) { // Allow debt if valuation is 0 (start)
+            } else if (state.cash < 0 && state.valuation > 0) {
                 loadNode('game_over_cash');
+            } else if (state.family <= 0) {
+                loadNode('game_over_family');
             } else {
-                loadNode(opt.next);
+                loadNode(nextNode);
             }
         }
 
@@ -545,25 +683,30 @@
             if(!state.traits.includes(trait)) {
                 state.traits.push(trait);
                 const badge = document.createElement('span');
-                badge.className = 'trait ' + (['10x Team', 'Profit First', 'YC Alumni'].includes(trait) ? 'good' : 'neutral');
+                let type = 'neutral';
+                if(['Tech Genius CF', 'Design First', 'Robust Tech'].includes(trait)) type = 'good';
+                if(['Tech Debt', 'Ugly But Works'].includes(trait)) type = 'bad';
+                badge.className = `trait ${type}`;
                 badge.innerText = trait;
                 document.getElementById('traits-box').appendChild(badge);
             }
         }
 
         function renderEndScreen(node) {
-            // Calculate Net Worth
-            // Formula: (Valuation * (Equity/100)) + Cash
             const netWorth = (state.valuation * (state.equity / 100)) + state.cash;
-            
             const choicesBox = document.getElementById('choices');
+            
+            // Glitch effect on title if fail
+            const titleClass = node.title.includes('FAILURE') ? 'glitch-text' : '';
+            document.getElementById('node-title').className = titleClass;
+            document.getElementById('node-title').setAttribute('data-text', node.title);
+
             choicesBox.innerHTML = `
-                <div style="background: rgba(168, 85, 247, 0.1); border: 1px solid var(--accent); padding: 30px; border-radius: 12px; text-align: center;">
-                    <h3 style="margin-top:0; color: var(--accent);">CAREER SUMMARY</h3>
-                    <p style="font-size: 1.5rem; margin: 10px 0;">Final Net Worth: <strong style="color: var(--text-main);">${formatMoney(netWorth)}</strong></p>
-                    <p>Equity Retained: ${state.equity}%</p>
-                    <p>Company Valuation: ${formatMoney(state.valuation)}</p>
-                    <button class="choice-btn" style="justify-content: center; margin-top: 20px;" onclick="location.reload()">START NEW COMPANY</button>
+                <div style="background: rgba(168, 85, 247, 0.05); border: 1px solid var(--border); padding: 25px; border-radius: 12px; text-align: center;">
+                    <h3 style="margin-top:0; color: var(--accent); letter-spacing: 2px;">SUMMARY</h3>
+                    <p style="font-size: 1.4rem; margin: 10px 0;">Net Worth: <strong style="color: var(--text-main);">${formatMoney(netWorth)}</strong></p>
+                    <p style="font-size: 0.9rem; color: var(--text-muted);">Equity: ${state.equity}% | Sanity: ${state.family}%</p>
+                    <button class="choice-btn" style="justify-content: center; margin-top: 20px; width: 100%;" onclick="location.reload()">RESTART SIMULATION</button>
                 </div>
             `;
         }
@@ -571,20 +714,23 @@
         function updateHUD() {
             document.getElementById('cash').innerText = formatMoney(state.cash);
             document.getElementById('valuation').innerText = formatMoney(state.valuation);
-            document.getElementById('equity').innerText = state.equity + '%';
+            document.getElementById('family').innerText = state.family + '%';
             document.getElementById('stress').innerText = state.stress + '%';
             
             document.getElementById('stress-fill').style.width = state.stress + '%';
-            document.getElementById('equity-fill').style.width = state.equity + '%';
+            document.getElementById('family-fill').style.width = state.family + '%';
+            
+            // Visual warning for stress
+            if(state.stress > 80) document.getElementById('stress-fill').style.boxShadow = "0 0 10px red";
+            else document.getElementById('stress-fill').style.boxShadow = "none";
         }
 
         function formatMoney(num) {
-            if (num >= 1000000000) return '$' + (num / 1000000000).toFixed(1) + 'B';
-            if (num >= 1000000) return '$' + (num / 1000000).toFixed(1) + 'M';
-            if (num >= 1000) return '$' + (num / 1000).toFixed(0) + 'k';
+            if (Math.abs(num) >= 1000000000) return '$' + (num / 1000000000).toFixed(1) + 'B';
+            if (Math.abs(num) >= 1000000) return '$' + (num / 1000000).toFixed(1) + 'M';
+            if (Math.abs(num) >= 1000) return '$' + (num / 1000).toFixed(0) + 'k';
             return '$' + num.toLocaleString();
         }
-
     </script>
 </body>
 </html>
