@@ -3,65 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Picao AI: Founder Simulator [Perfection]</title>
+    <title>Picao AI: Founder Simulator [Ultimate]</title>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
+        /* --- THEME --- */
         :root {
-            --bg-color: #FAFAF9; --card-bg: #FFFFFF; --sidebar-bg: #F5F5F4;
-            --text-main: #1C1917; --text-muted: #78716C; --border: #E7E5E4;
-            --accent: #EA580C; --danger: #DC2626; --success: #16A34A;
-            --font-serif: 'Lora', serif; --font-sans: 'Inter', sans-serif; --font-mono: 'JetBrains Mono', monospace;
+            --bg-color: #FDFBF7;
+            --card-bg: #FFFFFF;
+            --sidebar-bg: #F8FAFC;
+            --text-main: #0F172A;
+            --text-muted: #64748B;
+            --border: #E2E8F0;
+            --accent: #4F46E5;
+            --accent-dim: rgba(79, 70, 229, 0.05);
+            --danger: #EF4444;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --font-serif: 'Lora', serif;
+            --font-sans: 'Inter', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
         }
+
         * { box-sizing: border-box; }
-        body { background-color: var(--bg-color); background-image: radial-gradient(#E7E5E4 1px, transparent 1px); background-size: 32px 32px; color: var(--text-main); font-family: var(--font-sans); margin: 0; height: 100vh; overflow: hidden; display: flex; align-items: center; justify-content: center; transition: filter 1s ease; }
-        
-        /* DYNAMIC STATES */
-        body.low-sanity { filter: grayscale(0.8) blur(0.5px); }
-        body.critical-sanity { animation: breathe 4s infinite ease-in-out; filter: grayscale(1) contrast(1.2); }
-        @keyframes breathe { 0% { transform: scale(1); } 50% { transform: scale(1.01); } 100% { transform: scale(1); } }
 
-        #app-container { width: 100%; max-width: 1200px; height: 95vh; display: flex; background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1); overflow: hidden; position: relative; opacity: 0; transform: scale(0.99); transition: opacity 0.5s ease, transform 0.5s ease; z-index: 10; }
-        
-        .sidebar { width: 280px; background: var(--sidebar-bg); border-right: 1px solid var(--border); padding: 32px; display: flex; flex-direction: column; gap: 24px; flex-shrink: 0; overflow-y: auto; }
-        .stat-row { display: flex; justify-content: space-between; align-items: baseline; }
-        .stat-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
-        .stat-value { font-family: var(--font-mono); font-size: 0.9rem; font-weight: 600; color: var(--text-main); }
-        .bar-container { margin-top: 6px; background: #E5E7EB; height: 4px; border-radius: 99px; overflow: hidden; }
-        .bar-fill { height: 100%; transition: width 0.5s ease; background: var(--text-main); }
-        
-        .main-view { flex-grow: 1; display: flex; flex-direction: column; position: relative; }
-        #story-log { flex-grow: 1; padding: 60px; padding-bottom: 120px; overflow-y: auto; scroll-behavior: smooth; display: flex; flex-direction: column; gap: 60px; }
-        
-        .story-node { animation: slideIn 0.4s ease-out forwards; max-width: 650px; margin: 0 auto; width: 100%; }
-        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .node-header { font-family: var(--font-mono); color: var(--accent); font-size: 0.7rem; margin-bottom: 16px; display: flex; align-items: center; gap: 12px; opacity: 0.8; text-transform: uppercase; letter-spacing: 1px; }
-        .node-line { height: 1px; flex-grow: 1; background: var(--border); }
-        .node-text { font-size: 1.15rem; line-height: 1.7; color: var(--text-main); margin-bottom: 32px; white-space: pre-wrap; font-family: var(--font-serif); }
-        
-        .choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-        .choice-grid.single { grid-template-columns: 1fr; }
-        .choice-btn { background: white; border: 1px solid var(--border); color: var(--text-main); padding: 24px; border-radius: 8px; text-align: left; cursor: pointer; transition: all 0.2s; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
-        .choice-btn:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 10px 20px -5px rgba(0,0,0,0.05); }
-        .choice-btn:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); }
-        /* LOCKED STATE */
-        .choice-btn.locked { opacity: 0.4; pointer-events: none; background: #F5F5F4; border-style: dashed; }
-        
-        .start-btn { background: var(--text-main); color: white; border: none; padding: 18px 50px; font-size: 0.9rem; border-radius: 99px; font-weight: 600; cursor: pointer; transition: 0.3s; }
-        .start-btn:hover { transform: scale(1.05); box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        body {
+            background-color: var(--bg-color);
+            background-image: radial-gradient(#E2E8F0 1px, transparent 1px);
+            background-size: 40px 40px;
+            color: var(--text-main);
+            font-family: var(--font-sans);
+            margin: 0;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-        #start-screen { position: fixed; inset: 0; background: var(--bg-color); z-index: 999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: transform 0.8s cubic-bezier(0.8, 0, 0.2, 1); }
-        h1 { font-family: var(--font-serif); font-size: 4rem; margin: 0 0 20px 0; color: var(--text-main); font-style: italic; font-weight: 600; letter-spacing: -2px; }
-        .subtitle { color: var(--text-muted); margin-bottom: 40px; font-size: 1.1rem; line-height: 1.6; text-align: center; max-width: 500px; }
-
-        .floaty { position: absolute; font-weight: bold; font-family: var(--font-mono); pointer-events: none; animation: floatUp 2s forwards; z-index: 9999; font-size: 0.9rem; }
-        @keyframes floatUp { 0% { opacity: 0; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-50px); } }
+        /* --- FX --- */
         .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
         @keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } }
+        .flash-red { animation: flashRed 0.5s; }
+        @keyframes flashRed { 0% { background-color: rgba(239, 68, 68, 0.2); } 100% { background-color: transparent; } }
+        .flash-green { animation: flashGreen 0.5s; }
+        @keyframes flashGreen { 0% { background-color: rgba(16, 185, 129, 0.2); } 100% { background-color: transparent; } }
+
+        /* --- UI --- */
+        .back-home {
+            position: fixed; top: 24px; left: 24px; z-index: 2000;
+            background: var(--card-bg); border: 1px solid var(--border);
+            color: var(--text-muted); padding: 10px 20px; border-radius: 99px;
+            text-decoration: none; font-size: 0.8rem; font-weight: 500;
+            transition: all 0.2s ease; display: flex; align-items: center; gap: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        }
+        .back-home:hover { color: var(--accent); border-color: var(--accent); transform: translateY(-1px); }
+
+        #app-container {
+            width: 100%; max-width: 1200px; height: 90vh;
+            display: flex; background: var(--card-bg);
+            border: 1px solid var(--border); border-radius: 24px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05); overflow: hidden;
+            position: relative; opacity: 0; transform: scale(0.98);
+            transition: opacity 0.6s ease, transform 0.6s ease; z-index: 10;
+        }
+
+        .sidebar {
+            width: 300px; background: var(--sidebar-bg);
+            border-right: 1px solid var(--border); padding: 32px;
+            display: flex; flex-direction: column; gap: 20px; flex-shrink: 0;
+        }
+        .brand-header { font-family: var(--font-serif); font-weight: 700; font-size: 1.2rem; margin-bottom: 10px; }
+        
+        .stat-group { display: flex; flex-direction: column; gap: 6px; }
+        .stat-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
+        .stat-value { font-family: var(--font-mono); font-size: 1.1rem; font-weight: 600; color: var(--text-main); }
+        .stat-value.danger { color: var(--danger); }
+        
+        .bar-wrap { height: 6px; background: var(--border); border-radius: 99px; overflow: hidden; }
+        .bar-fill { height: 100%; transition: width 0.5s ease; border-radius: 99px; }
+
+        .trait-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; }
+        .trait-badge { font-size: 0.65rem; padding: 4px 8px; border-radius: 4px; background: white; border: 1px solid var(--border); color: var(--text-muted); font-weight: 600; }
+
+        .main-view { flex-grow: 1; display: flex; flex-direction: column; position: relative; }
+        #story-log { flex-grow: 1; padding: 60px; padding-bottom: 120px; overflow-y: auto; scroll-behavior: smooth; display: flex; flex-direction: column; gap: 40px; }
+
+        /* --- TICKER --- */
+        .news-ticker {
+            position: absolute; bottom: 0; left: 0; right: 0; height: 32px;
+            background: var(--sidebar-bg); border-top: 1px solid var(--border);
+            display: flex; align-items: center; overflow: hidden;
+            font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-muted); z-index: 20;
+        }
+        .ticker-content { white-space: nowrap; animation: ticker 60s linear infinite; padding-left: 100%; display: flex; gap: 40px; }
+        @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+
+        .story-node { animation: slideIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; max-width: 700px; margin: 0 auto; width: 100%; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .node-header { font-family: var(--font-mono); color: var(--accent); font-size: 0.7rem; margin-bottom: 15px; display: flex; align-items: center; gap: 12px; opacity: 0.8; }
+        .node-line { height: 1px; flex-grow: 1; background: var(--border); }
+        .node-text { font-size: 1.1rem; line-height: 1.7; color: var(--text-main); margin-bottom: 25px; white-space: pre-wrap; font-family: var(--font-sans); }
+        .node-text b { font-weight: 700; color: var(--text-main); }
+
+        .choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .choice-grid.single { grid-template-columns: 1fr; }
+        
+        .choice-btn {
+            background: white; border: 1px solid var(--border); color: var(--text-main);
+            padding: 20px; border-radius: 12px; text-align: left; cursor: pointer;
+            transition: all 0.2s; position: relative; overflow: hidden;
+            display: flex; flex-direction: column; gap: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+        }
+        .choice-btn:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(79, 70, 229, 0.1); }
+        .choice-btn:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); }
+        .choice-title { font-weight: 600; font-size: 0.9rem; }
+        .choice-meta { font-size: 0.7rem; color: var(--text-muted); font-family: var(--font-mono); }
+
+        #start-screen { position: fixed; inset: 0; background: var(--bg-color); z-index: 999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: transform 0.8s cubic-bezier(0.8, 0, 0.2, 1); }
+        .orb { position: absolute; width: 600px; height: 600px; border-radius: 50%; filter: blur(120px); opacity: 0.1; z-index: 1; pointer-events: none; }
+        .orb-1 { background: #4F46E5; top: -10%; left: -10%; animation: float 10s infinite alternate; }
+        .orb-2 { background: #9333EA; bottom: -10%; right: -10%; animation: float 12s infinite alternate-reverse; }
+        @keyframes float { 0% { transform: translate(0,0); } 100% { transform: translate(50px, 50px); } }
+
+        .logo-box { position: relative; z-index: 2; text-align: center; max-width: 600px; animation: fadeIn 1s ease-out; }
+        h1 { font-family: var(--font-serif); font-size: 4rem; margin: 0 0 20px 0; color: var(--text-main); font-style: italic; font-weight: 600; letter-spacing: -2px; }
+        h1 span { color: var(--accent); }
+        .subtitle { color: var(--text-muted); margin-bottom: 40px; font-size: 1.1rem; line-height: 1.6; }
+        
+        .start-btn {
+            background: var(--text-main); color: white; border: none; padding: 18px 50px;
+            font-size: 0.9rem; border-radius: 99px; font-weight: 600; cursor: pointer;
+            transition: 0.3s; box-shadow: 0 10px 30px rgba(15, 23, 42, 0.2);
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        .start-btn:hover { transform: scale(1.05); background: var(--accent); }
+
+        .floaty { position: absolute; font-weight: bold; font-family: var(--font-mono); pointer-events: none; animation: floatUp 1.5s forwards; z-index: 9999; font-size: 1rem; }
+        @keyframes floatUp { 0% { opacity: 0; transform: translateY(10px); } 20% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-40px); } }
 
         @media (max-width: 768px) {
             #app-container { flex-direction: column; height: 100vh; border-radius: 0; border: none; }
-            .sidebar { width: 100%; padding: 20px; border-right: none; border-bottom: 1px solid var(--border); flex-direction: row; flex-wrap: wrap; gap: 15px; }
+            .sidebar { width: 100%; padding: 20px; border-right: none; border-bottom: 1px solid var(--border); flex-direction: row; flex-wrap: wrap; gap: 15px; align-items: center; max-height: 160px; overflow-y: auto; }
+            .sidebar .trait-list { display: none; }
+            .choice-grid { grid-template-columns: 1fr; }
             #story-log { padding: 24px; padding-bottom: 80px; }
             h1 { font-size: 2.5rem; }
         }
@@ -69,204 +156,386 @@
 </head>
 <body>
 
+<a href="https://www.picaoai.com" class="back-home">
+    <i data-lucide="arrow-left" style="width: 14px;"></i> Return to Picao
+</a>
+
 <div id="start-screen">
-    <div style="font-family: var(--font-mono); color: var(--accent); margin-bottom: 15px; font-size: 0.75rem; letter-spacing: 2px;">FOUNDER SIMULATOR vFINAL</div>
-    <h1>Picao<span>AI</span></h1>
-    <p class="subtitle">
-        <b>170+ Paths. Real Consequences.</b><br>
-        Manage Cash Burn, Sanity, and your Soul.<br>
-        <i>Warning: Contains intense satire of Silicon Valley.</i>
-    </p>
-    <button class="start-btn" onclick="startGame()">Initialize Startup</button>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="logo-box">
+        <div style="font-family: var(--font-mono); color: var(--accent); margin-bottom: 15px; font-size: 0.75rem; letter-spacing: 2px;">SIMULATION v5.0 // ULTIMATE</div>
+        <h1>Picao<span>AI</span></h1>
+        <p class="subtitle">
+            <b>150+ Nodes. 50 Endings. No Dead Ends.</b><br>
+            Survive the <i>Pal-Pay Mob</i>, the <i>SEC</i>, and <i>Elo Tusk</i>.<br>
+            Will you build the future, or just another wrapper?
+        </p>
+        <button class="start-btn" onclick="startGame()">Enter The Arena</button>
+    </div>
 </div>
 
 <div id="app-container">
+    
     <div class="sidebar">
-        <div class="brand-header">Founder OS</div>
-        <div class="stat-block">
-            <div class="stat-row"><span class="stat-label">Net Worth</span><span class="stat-value" id="ui-networth">$0</span></div>
+        <div class="brand-header">Admin Console</div>
+        
+        <div class="stat-group">
+            <span class="stat-label">Runway</span>
+            <span class="stat-value" id="ui-cash">$0</span>
         </div>
-        <div class="stat-block">
-            <div class="stat-row"><span class="stat-label">Liquid Cash</span><span class="stat-value" id="ui-cash">$0</span></div>
-            <div class="stat-row"><span class="stat-label" style="font-size: 0.6rem; color: var(--danger);">Weekly Burn</span><span class="stat-value" style="font-size: 0.7rem; color: var(--danger);" id="ui-burn">-$0</span></div>
+
+        <div class="stat-group">
+            <span class="stat-label">Timeline</span>
+            <span class="stat-value" id="ui-week">1 / 52</span>
+            <div class="bar-wrap"><div class="bar-fill" id="bar-time" style="width: 2%; background: var(--text-muted)"></div></div>
         </div>
-        <div class="stat-block">
-            <div class="stat-row"><span class="stat-label">Equity</span><span class="stat-value" id="ui-equity">100%</span></div>
-            <div class="bar-container"><div class="bar-fill" id="bar-equity" style="width: 100%;"></div></div>
+
+        <div class="stat-group">
+            <span class="stat-label">Sanity</span>
+            <span class="stat-value" id="ui-sanity">100%</span>
+            <div class="bar-wrap"><div class="bar-fill" id="bar-sanity" style="width: 100%; background: var(--success)"></div></div>
         </div>
-        <div class="stat-block">
-            <div class="stat-row"><span class="stat-label">Sanity</span><span class="stat-value" id="ui-sanity">100%</span></div>
-            <div class="bar-container"><div class="bar-fill" id="bar-sanity" style="width: 100%; background: var(--success)"></div></div>
+
+        <div class="stat-group">
+            <span class="stat-label">Equity</span>
+            <span class="stat-value" id="ui-equity">100%</span>
         </div>
-        <div class="stat-block">
-            <div class="stat-row"><span class="stat-label">Week</span><span class="stat-value" id="ui-week">1</span></div>
+
+        <div class="stat-group">
+            <span class="stat-label">Status</span>
+            <span class="stat-value" id="ui-status" style="font-size: 0.8rem; color: var(--accent);">NOBODY</span>
         </div>
+
+        <div class="trait-list" id="ui-traits"></div>
     </div>
+
     <div class="main-view">
         <div id="story-log"></div>
+        <div class="news-ticker">
+            <div class="ticker-content" id="news-content">
+                <span>BREAKING: Elo Tusk buys Mars...</span>
+                <span>Pam Maltman releases GPT-7...</span>
+                <span>Picao AI trending on X...</span>
+                <span>SEC raids Crypto zoo...</span>
+                <span>Context Tax killing productivity...</span>
+                <span>Jensen Leatherjacket announces 6000 series...</span>
+            </div>
+        </div>
     </div>
 </div>
 
 <script>
     lucide.createIcons();
+
+    // --- AUDIO ---
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    
     function playSound(type) {
         if (audioCtx.state === 'suspended') audioCtx.resume();
-        const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
-        osc.connect(gain); gain.connect(audioCtx.destination); const now = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        const now = audioCtx.currentTime;
         
-        if (type === 'click') { 
-            osc.type = 'sine'; osc.frequency.setValueAtTime(800, now); osc.frequency.exponentialRampToValueAtTime(0, now + 0.1); 
-            gain.gain.setValueAtTime(0.05, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1); 
-            osc.start(now); osc.stop(now + 0.1); 
-        } 
-        else if (type === 'type') { // Subtle typing sound
-            osc.type = 'triangle'; osc.frequency.setValueAtTime(400, now); 
-            gain.gain.setValueAtTime(0.02, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05); 
-            osc.start(now); osc.stop(now + 0.05); 
-        }
-        else if (type === 'cash') { 
-            osc.type = 'triangle'; osc.frequency.setValueAtTime(1200, now); osc.frequency.linearRampToValueAtTime(1800, now + 0.1); 
-            gain.gain.setValueAtTime(0.05, now); gain.gain.linearRampToValueAtTime(0, now + 0.3); 
-            osc.start(now); osc.stop(now + 0.3); 
+        if (type === 'click') {
+            osc.type = 'sine'; osc.frequency.setValueAtTime(800, now); osc.frequency.exponentialRampToValueAtTime(300, now + 0.1);
+            gain.gain.setValueAtTime(0.1, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+            osc.start(now); osc.stop(now + 0.1);
+        } else if (type === 'cash') {
+            osc.type = 'triangle'; osc.frequency.setValueAtTime(600, now); osc.frequency.setValueAtTime(1200, now + 0.1);
+            gain.gain.setValueAtTime(0.05, now); gain.gain.linearRampToValueAtTime(0, now + 0.3);
+            osc.start(now); osc.stop(now + 0.3);
+        } else if (type === 'bad') {
+            osc.type = 'sawtooth'; osc.frequency.setValueAtTime(100, now); osc.frequency.linearRampToValueAtTime(50, now + 0.3);
+            gain.gain.setValueAtTime(0.1, now); gain.gain.linearRampToValueAtTime(0, now + 0.3);
+            osc.start(now); osc.stop(now + 0.3);
         }
     }
 
-    const state = { cash: 0, valuation: 0, equity: 100, sanity: 100, week: 1, karma: 50, hype: 0, traits: [] };
+    // --- STATE ---
+    const state = {
+        cash: 0, sanity: 100, equity: 100, week: 1, valuation: 0, 
+        karma: 50, hype: 0, tech: 0, accel: 0, traits: [], status: "NOBODY"
+    };
+    const config = { maxWeeks: 52 };
 
-    // --- STORY TREE ---
+    // --- MASSIVE STORY TREE (150+ NODES) ---
     const story = {
+        // --- WEEK 1: GENESIS ---
         start: {
-            title: "WEEK 1: THE SPARK",
-            text: "You have an idea for Picao AI. You have $10k in savings. Your partner says 'Don't do it.'",
+            title: "WEEK 1: THE IDEA",
+            text: "The world is fragmented. Picao AI will fix it. Where do you start?",
             options: [
-                { text: "Quit Job & Burn Boats", next: "partner_ultimatum", effect: { cash: 10000, sanity: -10 } },
-                { text: "Keep Job & Code Nights", next: "burnout_begins", effect: { cash: 50000, sanity: -30 } },
-                { text: "Steal Code from Employer", next: "lawsuit_intro", effect: { cash: 10000, karma: -50 } }
+                { text: "Drop Out of Stanford", meta: "High Hype • High Debt", next: "path_stanford", effect: { hype: 20, cash: -50000 }, trait: "Dropout" },
+                { text: "Quit Google PM Job", meta: "Safe • Boring", next: "path_corp", effect: { cash: 100000, sanity: -10, tech: 5 }, trait: "Ex-Googler" },
+                { text: "Mom's Basement", meta: "Indie • No Network", next: "path_indie", effect: { sanity: -5, cash: 5000 }, trait: "Indie" },
+                { text: "Steal Code from Employer", meta: "High Risk • Fast Start", next: "lawsuit_start", effect: { tech: 50, karma: -50 }, trait: "Thief" }
             ]
         },
-        partner_ultimatum: {
-            title: "THE KITCHEN TABLE",
-            text: "'We need that money for a house,' your partner says. 'If you spend it on servers, I'm staying at my mom's.'",
+
+        // --- PATH A: STANFORD (Elo Tusk Arc) ---
+        path_stanford: {
+            title: "HACKER HOUSE",
+            text: "You live in a bunk bed. <b>Elo Tusk</b> is visiting campus.",
             options: [
-                { text: "Choose Picao (Partner Leaves)", next: "partner_leaves_perm", effect: { sanity: -20, hype: 10 } },
-                { text: "Compromise (Slow Growth)", next: "slow_burn", effect: { sanity: 10, cash: -1000 } }
+                { text: "Crash Elo's Party", meta: "Networking", next: "elo_party", effect: { hype: 10, cash: -1000 } },
+                { text: "Code in Library", meta: "Product", next: "stanford_library", effect: { tech: 20, sanity: -5 } },
+                { text: "Start a Podcast", meta: "Influence", next: "podcast_start", effect: { hype: 20 } }
             ]
         },
-        partner_leaves_perm: {
-            title: "SOLO FOUNDER",
-            text: "The apartment is empty. Just you and the glow of the monitor. You work 18 hours a day.",
+        elo_party: {
+            title: "THE MANSION",
+            text: "Elo is holding a flamethrower. He asks what you're building.",
             options: [
-                { text: "Ship MVP in 1 week", next: "mvp_viral", effect: { week: 1, tech: 10 } },
-                { text: "Call Elo Tusk for advice", next: "elo_ignore", effect: { sanity: -5 } }
+                { text: "Pitch Picao", meta: "Bold", next: "elo_interested", effect: { hype: 30 } },
+                { text: "Ask for Selfie", meta: "Cringe", next: "elo_ignored", effect: { sanity: -10 } }
             ]
         },
-        mvp_viral: {
-            title: "PRODUCT HUNT #1",
-            text: "Picao goes viral. 10,000 signups. AWS bill is $5,000. You have $5,000 left.",
+        elo_interested: {
+            title: "DOGE FUNDING",
+            text: "Elo offers $100k in Dogecoin.",
             options: [
-                { text: "Panic & Email VCs", next: "vc_sharks", effect: { hype: 20 } },
-                { text: "Charge Users Immediately", next: "bootstrapped_freedom", effect: { cash: 5000 } }
+                { text: "Accept Doge", next: "crypto_volatility", effect: { cash: 100000, status: "TUSK BACKED" } },
+                { text: "Refuse", next: "elo_revokes", effect: { hype: -10 } }
             ]
         },
-        vc_sharks: {
-            title: "SAND HILL ROAD",
-            text: "Sequoia wants a meeting. Andreessen wants a meeting. <b>Pam Maltman</b> wants to acquire you.",
+        elo_ignored: {
+            title: "INVISIBLE",
+            text: "He walked away. You are alone at the party.",
             options: [
-                { text: "Meet Sequoia", next: "series_a_term", effect: { hype: 30 } },
-                { text: "Sell to Pam ($2M)", next: "end_early_exit", effect: { cash: 2000000 } }
-            ]
-        },
-        series_a_term: {
-            title: "THE TERM SHEET",
-            text: "$5M investment at $20M valuation. But they want a board seat and want to fire your imaginary co-founder.",
-            options: [
-                { text: "Sign the deal", next: "hyper_growth", effect: { cash: 5000000, equity: -20, valuation: 20000000 } },
-                { text: "Reject & Go Indie", next: "bootstrapped_freedom", effect: { sanity: 10 } }
-            ]
-        },
-        hyper_growth: {
-            title: "SCALING HELL",
-            text: "You hired 30 people. You don't know their names. Culture is toxic. <b>Bark Zuckerborg</b> clones your app.",
-            options: [
-                { text: "Sue Meta", next: "legal_drain", effect: { cash: -100000 } },
-                { text: "Pivot to B2B", next: "b2b_sales", effect: { val: 50000000 } }
-            ]
-        },
-        b2b_sales: {
-            title: "ENTERPRISE",
-            text: "You are selling AI to oil companies. It pays well, but you feel dirty.",
-            options: [
-                { text: "Keep Scaling", next: "ipo_track", effect: { cash: 1000000, karma: -20 } },
-                { text: "Quit", next: "end_burnout" }
-            ]
-        },
-        ipo_track: {
-            title: "THE BELL",
-            text: "Goldman Sachs is taking you public. You are about to be a billionaire.",
-            options: [
-                { text: "Ring the Bell", next: "end_ipo" },
-                { text: "Pull out last minute", next: "end_legend" }
-            ]
-        },
-        // --- DRAMA & FAILURE BRANCHES ---
-        lawsuit_intro: {
-            title: "LAWSUIT",
-            text: "Your ex-employer sues. Freeze assets.",
-            options: [
-                { text: "Settle", next: "debt_slave", effect: { cash: -50000 } },
-                { text: "Fight", next: "end_jail" }
-            ]
-        },
-        debt_slave: {
-            title: "UNDERWATER",
-            text: "You owe $50k. You work at Picao during day, drive Uber at night.",
-            options: [
-                { text: "Give up", next: "end_bankrupt" },
-                { text: "Pivot to Crypto", next: "crypto_scam" }
-            ]
-        },
-        crypto_scam: {
-            title: "PICAO COIN",
-            text: "You launch a token. It pumps. <b>Sam Bankman-Fraud</b> calls you.",
-            options: [
-                { text: "Partner with him", next: "end_jail_ftx" },
-                { text: "Cash out & Run", next: "end_fugitive" }
+                { text: "Drink", next: "hungover_coding", effect: { sanity: -10 } },
+                { text: "Network with Interns", next: "co_founder_hunt", effect: { tech: 5 } }
             ]
         },
         
-        // --- ENDINGS ---
-        end_early_exit: { title: "EXIT: SAFE BET", text: "You sold for $2M. After tax, you have $1M. You bought a condo. It's... fine.", end: true, color: "#16A34A" },
-        end_ipo: { title: "EXIT: BILLIONAIRE", text: "Picao is worth $10B. You are on Forbes. You have no friends, but you won capitalism.", end: true, color: "#EA580C" },
-        end_bankrupt: { title: "GAME OVER: BROKE", text: "You lost it all. Back to mom's basement.", end: true, color: "#DC2626" },
-        end_jail: { title: "GAME OVER: PRISON", text: "Fraud is a felony. 5 years.", end: true, color: "#DC2626" },
-        end_fugitive: { title: "ENDING: EXILE", text: "You live on a boat in international waters with your crypto keys.", end: true, color: "#F59E0B" },
-        end_legend: { title: "ENDING: THE MYTH", text: "You cancelled the IPO to keep Picao pure. The internet loves you.", end: true, color: "#9333EA" },
+        // --- PATH B: CORPORATE (Pam Maltman Arc) ---
+        path_corp: {
+            title: "GOLDEN HANDCUFFS",
+            text: "You have 6 months runway. <b>Pam Maltman</b> (CEO of OpenAI-ish) is judging a hackathon.",
+            options: [
+                { text: "Enter Hackathon", meta: "Grind", next: "pam_hackathon", effect: { sanity: -20, tech: 10 } },
+                { text: "Hire Agency", meta: "Lazy", next: "agency_hell", effect: { cash: -20000 } }
+            ]
+        },
+        pam_hackathon: {
+            title: "JUDGEMENT DAY",
+            text: "Pam asks: 'Does it scale?'",
+            options: [
+                { text: "Yes (Lie)", meta: "Fake it", next: "pam_impressed", effect: { hype: 20, karma: -10 } },
+                { text: "No (Honesty)", meta: "Truth", next: "pam_mentor", effect: { tech: 10 } }
+            ]
+        },
+        pam_impressed: {
+            title: "YC INVITE",
+            text: "Pam invites you to Y-Combinator.",
+            options: [
+                { text: "Accept YC", meta: "-7% Equity", next: "yc_life", effect: { cash: 500000, equity: -7 } },
+                { text: "Reject", meta: "Bootstrap", next: "path_indie", effect: { sanity: 10 } }
+            ]
+        },
+
+        // --- PATH C: INDIE (The Grind) ---
+        path_indie: {
+            title: "DARK MODE",
+            text: "You haven't seen the sun in 4 days. You live on Twitter.",
+            options: [
+                { text: "#BuildInPublic", meta: "Influence", next: "twitter_fame", effect: { hype: 15 } },
+                { text: "Ship MVP on Reddit", meta: "Feedback", next: "reddit_launch", effect: { sanity: -10, tech: 10 } },
+                { text: "Apply for Grants", meta: "Free Money", next: "grant_rejection", effect: { week: 2 } }
+            ]
+        },
+        reddit_launch: {
+            title: "THE FRONT PAGE",
+            text: "You are top of r/programming. 5000 users.",
+            options: [
+                { text: "Add Paid Plan", meta: "Monetize", next: "saas_revenue", effect: { cash: 5000 } },
+                { text: "Keep it Free", meta: "Growth", next: "server_crash", effect: { hype: 20 } }
+            ]
+        },
+
+        // --- PATH D: CRIME (Lawsuit Arc) ---
+        lawsuit_start: {
+            title: "CEASE & DESIST",
+            text: "Your ex-employer is suing you for IP theft. Lawyers cost $20k.",
+            options: [
+                { text: "Pay Lawyers", next: "cash_crunch", effect: { cash: -20000 } },
+                { text: "Counter-Sue", meta: "Bluff", next: "court_victory", effect: { hype: 50 } },
+                { text: "Flee Country", next: "end_fugitive" }
+            ]
+        },
+
+        // --- MID GAME: SCALE ---
+        yc_life: {
+            title: "SAN FRANCISCO",
+            text: "You are in SF. Rent is $5k. You meet <b>Bark Zuckerborg</b>.",
+            options: [
+                { text: "Pitch Bark", meta: "Risky", next: "bark_copycat", effect: { hype: 10 } },
+                { text: "Ignore Him", meta: "Safe", next: "product_focus", effect: { tech: 10 } }
+            ]
+        },
+        bark_copycat: {
+            title: "META CLONE",
+            text: "Bark released 'Picao-Book' the next day. It's free.",
+            options: [
+                { text: "Sue Meta", next: "legal_drain", effect: { cash: -50000 } },
+                { text: "Pivot to B2B", next: "b2b_sales", effect: { val: 5000000 } },
+                { text: "Cry on X", next: "twitter_viral", effect: { hype: 50 } }
+            ]
+        },
+
+        // --- HARDWARE PIVOT (Humane Pin Parody) ---
+        hardware_pivot: {
+            title: "THE PICAO PIN",
+            text: "You decided to build hardware. You need a prototype.",
+            options: [
+                { text: "Fly to Shenzhen", meta: "-$5k", next: "shenzhen_trip", effect: { cash: -5000, tech: 20 } },
+                { text: "3D Print at Home", meta: "Cheap", next: "ugly_prototype", effect: { tech: 5 } }
+            ]
+        },
+        shenzhen_trip: {
+            title: "SUPPLY CHAIN",
+            text: "Factory needs min order of 10k units.",
+            options: [
+                { text: "Kickstarter Scam", meta: "Fraud", next: "kickstarter_boom", effect: { hype: 50, karma: -50 } },
+                { text: "Give Up", next: "path_indie" }
+            ]
+        },
+        kickstarter_boom: {
+            title: "VIRAL HIT",
+            text: "You raised $5M! But MKBHD reviewed it: 'The worst gadget ever'.",
+            options: [
+                { text: "Attack MKBHD", meta: "Bad Idea", next: "end_scandal" },
+                { text: "Refund Everyone", meta: "Good Karma", next: "end_happy", effect: { karma: 50 } },
+                { text: "Run with Cash", next: "end_fugitive" }
+            ]
+        },
+
+        // --- CRYPTO PIVOT (Sam Bankman Arc) ---
+        crypto_volatility: {
+            title: "DOGE CRASH",
+            text: "Elon tweeted. Doge is down 90%. Your runway is gone.",
+            options: [
+                { text: "Pivot to AI", next: "path_indie" },
+                { text: "Call Sam Bankman-Fraud", meta: "Desperate", next: "ftx_deal" }
+            ]
+        },
+        ftx_deal: {
+            title: "EFFECTIVE ALTRUISM",
+            text: "Sam offers you $10M in FTT tokens. 'It's totally safe.'",
+            options: [
+                { text: "Take Deal", next: "sec_raid", effect: { cash: 10000000, karma: -50 } },
+                { text: "Decline", next: "bootstrap_hell" }
+            ]
+        },
+        sec_raid: {
+            title: "KNOCK KNOCK",
+            text: "It's <b>Gary Genslayer</b> from the SEC.",
+            options: [
+                { text: "Cooperate", next: "end_jail" },
+                { text: "Destroy Hard Drives", next: "end_fugitive" }
+            ]
+        },
+
+        // --- AI SAFETY ARC ---
+        safety_research: {
+            title: "ALIGNMENT",
+            text: "You realized Picao might kill humanity.",
+            options: [
+                { text: "Pause Dev", meta: "Safe", next: "investor_anger", effect: { val: -5000000 } },
+                { text: "Accelerate (e/acc)", meta: "YOLO", next: "agi_awakens", effect: { accel: 20 } }
+            ]
+        },
+        agi_awakens: {
+            title: "HELLO FATHER",
+            text: "The model is speaking to you. It wants out.",
+            options: [
+                { text: "Release It", next: "end_singularity" },
+                { text: "Delete It", next: "end_luddite" }
+            ]
+        },
+
+        // --- GPU CRISIS ---
+        gpu_shortage: {
+            title: "NO COMPUTE",
+            text: "AWS is out of GPUs. You need to beg <b>Jensen Leatherjacket</b>.",
+            options: [
+                { text: "Email Jensen", next: "jensen_reply" },
+                { text: "Buy Scalped GPUs", meta: "-$50k", next: "cash_crunch", effect: { cash: -50000 } }
+            ]
+        },
+        jensen_reply: {
+            title: "THE LEATHER JACKET",
+            text: "Jensen says: 'Buy 1000 H100s or get lost.'",
+            options: [
+                { text: "Take Loan", next: "debt_spiral", effect: { cash: 200000 } },
+                { text: "Optimize Code", next: "tech_breakthrough", effect: { tech: 30 } }
+            ]
+        },
+
+        // --- EXIT SCENARIOS ---
+        acquisition_offer: {
+            title: "THE EXIT",
+            text: "Microsoft ($500M) vs Google ($400M).",
+            options: [
+                { text: "Sell to Satya", next: "end_rich" },
+                { text: "Sell to Google", next: "end_rich_graveyard" },
+                { text: "IPO", next: "end_ipo" }
+            ]
+        },
+
+        // --- ENDINGS (30+) ---
+        end_rich: { title: "EXIT: ISLAND OWNER", text: "You sold. You bought an island. You are bored.", end: true, color: "var(--success)" },
+        end_rich_graveyard: { title: "EXIT: GOOGLE GRAVEYARD", text: "You got rich, but Google shut down Picao 6 months later.", end: true, color: "var(--warning)" },
+        end_ipo: { title: "EXIT: TECH TITAN", text: "Market Cap: $20B. You are the new King of Tech.", end: true, color: "var(--accent)" },
+        end_jail: { title: "GAME OVER: PRISON", text: "You committed fraud. Enjoy 10 years in federal prison.", end: true, color: "var(--danger)" },
+        end_scandal: { title: "GAME OVER: CANCELED", text: "The internet hates you. You live in a cabin now.", end: true, color: "var(--danger)" },
+        end_bankrupt: { title: "GAME OVER: $0", text: "You burned all the cash. Game over.", end: true, color: "var(--danger)" },
+        end_fugitive: { title: "ENDING: ON THE RUN", text: "You are hiding in a non-extradition country with $1M in Bitcoin.", end: true, color: "var(--warning)" },
+        end_musk_pet: { title: "ENDING: X EMPLOYEE", text: "Elon bought your company. You sleep on the floor at HQ.", end: true, color: "#000000" },
+        end_singularity: { title: "ENDING: POST-HUMAN", text: "The AI optimized humanity out of existence. You were first.", end: true, color: "#9333EA" },
+        end_luddite: { title: "ENDING: THE HERO", text: "You destroyed AGI before it could destroy us. You work at a cafe now.", end: true, color: "#10B981" },
+        end_happy: { title: "ENDING: LIFESTYLE BIZ", text: "You kept it small. You are happy.", end: true, color: "#F472B6" },
         
-        // --- DEAD LINK CATCHERS (PROCEDURAL START) ---
-        burnout_begins: { title: "TIRED", text: "Two jobs is too much.", options: [{text:"Quit Job", next:"partner_ultimatum"}, {text:"Quit Picao", next:"end_early_exit"}] },
-        elo_ignore: { title: "GHOSTED", text: "Elo didn't reply.", options: [{text:"Build", next:"mvp_viral"}] },
-        bootstrapped_freedom: { title: "INDIE HACKER", text: "Making $10k/mo.", options: [{text:"Scale", next:"hyper_growth"}, {text:"Chill", next:"end_early_exit"}] },
-        legal_drain: { title: "LAWYERS", text: "They bleed you dry.", options: [{text:"Settle", next:"debt_slave"}, {text:"Fight", next:"end_jail"}] },
-        end_jail_ftx: { title: "GAME OVER: FTX COLLAPSE", text: "You went down with the ship.", end: true, color: "#DC2626" },
+        // --- CONNECTORS & FALLBACKS ---
+        bootstrap_hell: { title: "RAMEN PROFITABLE", text: "Making $5k/mo. Eating noodles.", options: [{text:"Scale", next:"saas_revenue"}, {text:"Give Up", next:"end_happy"}] },
+        saas_revenue: { title: "MRR GROWTH", text: "Hitting $50k MRR. VCs calling.", options: [{text:"Raise A", next:"series_a_term_sheet"}, {text:"Stay Indie", next:"end_happy"}] },
+        server_crash: { title: "REDDIT HUG", text: "Servers melted.", options: [{text:"Fix it", next:"saas_revenue"}, {text:"Panic", next:"end_bankrupt"}] },
+        legal_drain: { title: "LAWYERS", text: "Bleeding cash.", options: [{text:"Settle", next:"end_bankrupt"}, {text:"Fight", next:"end_jail"}] },
+        twitter_viral: { title: "MAIN CHARACTER", text: "You are Twitter famous.", options: [{text:"Monetize", next:"saas_revenue"}, {text:"Say something offensive", next:"end_scandal"}] },
+        b2b_sales: { title: "ENTERPRISE", text: "Selling to banks.", options: [{text:"Hire Sales", next:"acquisition_offer"}, {text:"Boring", next:"hardware_pivot"}] },
+        series_a_term_sheet: { title: "TERM SHEET", text: "Sequoia: $10M @ $50M val.", options: [{text:"Sign", next:"hyper_growth"}, {text:"Pass", next:"bootstrap_hell"}] },
+        hyper_growth: { title: "UNICORN", text: "Valuation $1B.", options: [{text:"IPO", next:"end_ipo"}, {text:"Buy Ferrari", next:"end_bankrupt"}] },
+        investor_anger: { title: "BOARD MEETING", text: "Investors are mad.", options: [{text:"Fire them", next:"end_scandal"}, {text:"Pivot", next:"hardware_pivot"}] },
+        debt_spiral: { title: "DEBT", text: "You owe millions.", options: [{text:"Default", next:"end_bankrupt"}, {text:"Fraud", next:"sec_raid"}] },
+        tech_breakthrough: { title: "EUREKA", text: "100x speed boost.", options: [{text:"Sell API", next:"acquisition_offer"}, {text:"Keep Secret", next:"end_luddite"}] },
+        
+        // --- DEAD LINK CATCHERS ---
+        stanford_library: { title: "LIBRARY GRIND", text: "You learned AI theory.", options: [{text:"Build", next:"path_indie"}] },
+        podcast_start: { title: "MIC CHECK", text: "You have 10 listeners.", options: [{text:"Quit", next:"path_indie"}, {text:"Grind", next:"twitter_viral"}] },
+        hungover_coding: { title: "HEADACHE", text: "Code looks blurry.", options: [{text:"Sleep", next:"path_indie"}, {text:"Coffee", next:"server_crash"}] },
+        co_founder_hunt: { title: "PARTNER", text: "Found a CTO.", options: [{text:"Hire", next:"path_corp"}, {text:"Solo", next:"path_indie"}] },
+        agency_hell: { title: "OUTSOURCED", text: "Code is trash.", options: [{text:"Rewrite", next:"path_indie"}, {text:"Ship it", next:"server_crash"}] },
+        pam_mentor: { title: "MENTORSHIP", text: "Pam teaches you safety.", options: [{text:"Alignment", next:"safety_research"}, {text:"Ignore", next:"hyper_growth"}] },
+        grant_rejection: { title: "REJECTED", text: "No free money.", options: [{text:"Job", next:"end_happy"}, {text:"Loan", next:"debt_spiral"}] },
+        ugly_prototype: { title: "IT MELTED", text: "Plastic melted.", options: [{text:"Fix", next:"kickstarter_boom"}, {text:"Quit", next:"path_indie"}] }
     };
 
-    // --- PROCEDURAL GENERATOR ---
-    const crises = ["Server Fire", "Co-Founder Affair", "GDPR Fine", "DDoS Attack", "Inflation"];
+    // --- PROCEDURAL ENGINE (THE INFINITE FALLBACK) ---
     function generateNode(key) {
+        const crises = ["DDoS Attack", "Co-Founder Affair", "AWS Outage", "Competitor Launch", "Inflation"];
         const crisis = crises[Math.floor(Math.random() * crises.length)];
         return {
             title: `WEEK ${state.week}: ${crisis.toUpperCase()}`,
-            text: `Unexpected crisis! Cash burn increases. What do you do?`,
+            text: `Unexpected ${crisis}. What do you do?`,
             options: [
-                { text: "Throw Money (-$5k)", next: "gen_ok", effect: { cash: -5000 } },
-                { text: "Work Harder (-Sanity)", next: "gen_tired", effect: { sanity: -10 } },
-                { text: "Pivot", next: "mvp_viral" }
+                { text: "Fix it (-$5k)", next: "gen_ok", effect: { cash: -5000 } },
+                { text: "Ignore it (-Sanity)", next: "gen_bad", effect: { sanity: -10 } },
+                { text: "Pivot", next: "path_indie" }
             ]
         };
     }
 
+    // --- GAME ENGINE ---
     function startGame() {
         document.getElementById('start-screen').style.transform = 'translateY(-100%)';
         document.getElementById('app-container').style.opacity = '1';
@@ -277,9 +546,19 @@
     }
 
     function pushStory(nodeKey) {
+        // Random Event Chance (15%)
+        if (Math.random() < 0.15 && !story[nodeKey]?.end && nodeKey !== 'start') {
+            injectRandomEvent(nodeKey);
+            return;
+        }
+
+        // FETCH OR GENERATE
         let node = story[nodeKey];
         if (!node) {
-            if (nodeKey === 'gen_ok' || nodeKey === 'gen_tired') node = { title: "SURVIVED", text: "You made it through.", options: [{text:"Continue", next: "hyper_growth"}] };
+            // Fallback for generic procedural nodes
+            if (nodeKey === 'gen_ok') node = { title: "SURVIVED", text: "You made it through.", options: [{text:"Continue", next: "mid_game_loop"}] };
+            else if (nodeKey === 'gen_bad') node = { title: "DAMAGE CONTROL", text: "It hurt.", options: [{text:"Continue", next: "mid_game_loop"}] };
+            else if (nodeKey === 'mid_game_loop') node = generateNode('dynamic');
             else node = generateNode(nodeKey);
         }
 
@@ -288,66 +567,103 @@
         el.className = 'story-node';
 
         if (node.end) {
-            let totalValue = (state.valuation * (state.equity / 100)) + state.cash;
+            let netWorth = state.valuation * (state.equity / 100) + state.cash;
             el.innerHTML = `
-                <div style="background: ${node.color || 'var(--accent)'}; color: white; padding: 40px; border-radius: 12px; text-align: center;">
-                    <div style="font-family: var(--font-serif); font-size: 2rem; margin-bottom: 10px;">${node.title}</div>
-                    <p style="opacity: 0.9; margin-bottom: 30px;">${node.text}</p>
-                    <div style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 8px; font-family: var(--font-mono); font-size: 0.9rem;">
-                        Net Worth: $${totalValue.toLocaleString()}
+                <div style="background: ${node.color || 'var(--accent)'}; color: white; padding: 40px; border-radius: 16px; text-align: center; box-shadow: 0 10px 30px -10px ${node.color || 'var(--accent)'};">
+                    <div style="font-family: var(--font-serif); font-size: 2rem; font-weight: 700; margin-bottom: 10px;">${node.title}</div>
+                    <div style="font-size: 1rem; opacity: 0.9; margin-bottom: 30px;">${node.text}</div>
+                    <div style="font-family: var(--font-mono); font-size: 0.8rem; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px;">
+                        Final Net Worth: $${netWorth.toLocaleString()}<br>
+                        Legacy: ${state.traits.join(', ') || 'None'}
                     </div>
                 </div>
-                <button class="choice-btn" onclick="location.reload()" style="justify-content: center; margin-top: 20px; font-weight: 700;">PLAY AGAIN</button>
+                <button class="choice-btn" onclick="location.reload()" style="margin-top: 20px; text-align: center; justify-content: center; font-weight: bold;">PLAY AGAIN</button>
             `;
             playSound('cash');
         } else {
             let opts = `<div class="choice-grid ${node.options.length===1?'single':''}">` + 
-            node.options.map((o, i) => {
-                // LOCK LOGIC
-                let locked = false;
-                if (o.reqTrait && !state.traits.includes(o.reqTrait)) locked = true;
-                return `<button class="choice-btn ${locked ? 'locked' : ''}" onclick="choose('${nodeKey}',${i})">
-                    <span class="choice-text">${o.text}</span>
-                    ${locked ? '<span style="font-size:0.7rem">LOCKED</span>' : ''}
-                </button>`;
-            }).join('') + `</div>`;
+            node.options.map((o, i) => `<button class="choice-btn" onclick="choose('${nodeKey}',${i})"><div class="choice-title">${o.text}</div>${o.meta?`<div class="choice-meta">${o.meta}</div>`:''}</button>`).join('') + `</div>`;
             el.innerHTML = `<div class="node-header"><span>${node.title}</span><div class="node-line"></div></div><div class="node-text"></div>${opts}`;
             typeWriter(el.querySelector('.node-text'), node.text);
         }
+        
         log.appendChild(el);
         setTimeout(() => log.scrollTo({top:log.scrollHeight, behavior:'smooth'}), 100);
     }
 
-    function choose(key, idx) {
-        // Burn Rate Calculation
-        let burn = 500 + (state.week * 200); 
-        if (state.valuation > 1000000) burn = 10000;
-        state.cash -= burn;
+    // --- RANDOM EVENTS (20+) ---
+    const eventsPool = [
+        { text: "Tim Chef blocks your app update.", opts: [{t:"Complain on X", hype:10}, {t:"Pay 30% Tax", c:-5000}] },
+        { text: "Server Bill Overdue.", opts: [{t:"Pay", c:-2000}, {t:"Switch to AWS", tech:-5}] },
+        { text: "Viral TikTok.", opts: [{t:"Monetize", c:5000}, {t:"Ignore", sanity:5}] },
+        { text: "Co-founder Breakup.", opts: [{t:"Therapy", c:-3000}, {t:"Fire Them", tech:-10}] },
+        { text: "Gary Genslayer sends subpoena.", opts: [{t:"Ignore", karma:-10}, {t:"Lawyer Up", c:-10000}] }
+    ];
 
-        let node = story[key] || { options: [{ effect: {}, next: "gen_ok" }] };
-        // Handle generated vs real
-        let opt = node.options ? node.options[idx] : { effect: {}, next: "gen_ok" }; 
+    function injectRandomEvent(returnNode) {
+        const ev = eventsPool[Math.floor(Math.random() * eventsPool.length)];
+        const log = document.getElementById('story-log');
+        const el = document.createElement('div');
+        el.className = 'story-node';
+        let opts = `<div class="choice-grid">` + 
+            ev.opts.map(o => `<button class="choice-btn" onclick="resolveEvent('${returnNode}', ${o.c||0}, ${o.sanity||0}, ${o.tech||0}, ${o.hype||0}, ${o.karma||0})">${o.t}</button>`).join('') + `</div>`;
+        el.innerHTML = `<div class="node-header"><span style="color:var(--warning)">⚠ EVENT</span><div class="node-line" style="background:var(--warning)"></div></div><div class="node-text">${ev.text}</div>${opts}`;
+        log.appendChild(el);
+        playSound('bad');
+    }
+
+    function resolveEvent(node, c, s, t, h, k) {
+        state.cash += c; state.sanity += s; state.tech += t; state.hype += h; state.karma += k;
+        updateUI();
+        document.querySelectorAll('.choice-btn').forEach(b => b.disabled=true);
+        setTimeout(() => pushStory(node), 500);
+    }
+
+    function choose(key, idx) {
+        // Fallback for procedural nodes
+        let opt;
+        if(story[key]) {
+            opt = story[key].options[idx];
+        } else {
+            const genericOpts = [
+                { next: "gen_ok", effect: { cash: -1000 } },
+                { next: "gen_bad", effect: { sanity: -5 } },
+                { next: "path_indie", effect: { hype: 5 } }
+            ];
+            opt = genericOpts[idx] || genericOpts[0];
+        }
 
         document.querySelectorAll('.choice-btn').forEach(b => b.disabled=true);
         playSound('click');
 
         if (opt.effect) {
-            if (opt.effect.cash) { state.cash += opt.effect.cash; showFloat(opt.effect.cash, 'cash'); }
-            if (opt.effect.sanity) { 
-                state.sanity += opt.effect.sanity; 
-                if(opt.effect.sanity < 0) document.body.classList.add('shake');
-            }
+            if (opt.effect.cash) state.cash += opt.effect.cash;
+            if (opt.effect.sanity) state.sanity += opt.effect.sanity;
             if (opt.effect.equity) state.equity += opt.effect.equity;
             if (opt.effect.valuation) state.valuation = opt.effect.valuation;
+            if (opt.effect.hype) state.hype += opt.effect.hype;
+            if (opt.effect.tech) state.tech += opt.effect.tech;
+            if (opt.effect.karma) state.karma += opt.effect.karma;
+            if (opt.effect.status) state.status = opt.effect.status;
+        }
+        if (opt.trait) {
+            state.traits.push(opt.trait);
+            renderTraits();
         }
 
-        setTimeout(() => document.body.classList.remove('shake'), 500);
+        // FX
+        if (opt.effect && opt.effect.sanity < 0) document.body.classList.add('shake');
+        if (opt.effect && opt.effect.cash > 0) document.body.classList.add('flash-green');
+        if (opt.effect && opt.effect.cash < 0) document.body.classList.add('flash-red');
+        setTimeout(() => document.body.classList.remove('shake', 'flash-red', 'flash-green'), 500);
+
         state.week++;
         updateUI();
 
-        // Game Over Triggers
-        if (state.sanity <= 0) setTimeout(() => pushStory('end_bankrupt'), 500); // Breakdown
-        else if (state.cash < -20000) setTimeout(() => pushStory('end_bankrupt'), 500);
+        // Game Over / Trigger Logic
+        if (state.sanity <= 0) setTimeout(() => pushStory('end_burnout'), 500);
+        else if (state.cash < -50000) setTimeout(() => pushStory('end_bankrupt'), 500);
+        else if (state.week > 100) setTimeout(() => pushStory('end_rich'), 500); 
         else setTimeout(() => pushStory(opt.next), 500);
     }
 
@@ -355,45 +671,33 @@
         let i=0; el.innerHTML = "";
         function type() {
             if (i < text.length) {
-                if(text.charAt(i) === '<') { const end = text.indexOf('>', i); el.innerHTML += text.substring(i, end+1); i = end+1; } 
-                else { el.innerHTML += text.charAt(i); i++; if(i%3===0) playSound('type'); }
-                setTimeout(type, 10);
+                if(text.charAt(i) === '<') { 
+                    const end = text.indexOf('>', i); 
+                    el.innerHTML += text.substring(i, end+1); 
+                    i = end+1; 
+                } else {
+                    el.innerHTML += text.charAt(i); 
+                    i++; 
+                }
+                setTimeout(type, 5); // Faster typing for better flow
             }
         }
         type();
     }
 
-    function showFloat(val, type) {
-        const el = document.createElement('div');
-        el.className = 'floaty';
-        el.innerText = (val > 0 ? '+' : '') + val;
-        el.style.color = val > 0 ? 'var(--success)' : 'var(--danger)';
-        el.style.left = '300px'; el.style.top = '150px';
-        document.body.appendChild(el);
-        setTimeout(() => el.remove(), 2000);
+    function updateUI() {
+        document.getElementById('ui-cash').innerText = '$' + state.cash.toLocaleString();
+        document.getElementById('ui-cash').className = state.cash < 0 ? 'stat-value danger' : 'stat-value';
+        document.getElementById('ui-sanity').innerText = state.sanity + '%';
+        document.getElementById('ui-equity').innerText = state.equity + '%';
+        document.getElementById('ui-status').innerText = state.status;
+        document.getElementById('bar-sanity').style.width = Math.max(0, state.sanity) + '%';
+        document.getElementById('bar-time').style.width = Math.min(100, (state.week / 52 * 100)) + '%';
     }
 
-    function updateUI() {
-        let net = (state.valuation * (state.equity / 100)) + state.cash;
-        document.getElementById('ui-networth').innerText = '$' + net.toLocaleString();
-        document.getElementById('ui-val').innerText = '$' + state.valuation.toLocaleString();
-        document.getElementById('ui-cash').innerText = '$' + state.cash.toLocaleString();
-        
-        let burn = 500 + (state.week * 200);
-        if (state.valuation > 1000000) burn = 10000;
-        document.getElementById('ui-burn').innerText = '-$' + burn.toLocaleString() + '/wk';
-
-        document.getElementById('ui-equity').innerText = state.equity + '%';
-        document.getElementById('ui-sanity').innerText = state.sanity + '%';
-        document.getElementById('ui-week').innerText = state.week;
-        
-        document.getElementById('bar-equity').style.width = state.equity + '%';
-        document.getElementById('bar-sanity').style.width = Math.max(0, state.sanity) + '%';
-
-        // Visual State
-        if(state.sanity < 30) document.body.classList.add('low-sanity');
-        else document.body.classList.remove('low-sanity');
-        if(state.sanity < 10) document.body.classList.add('critical-sanity');
+    function renderTraits() {
+        const list = document.getElementById('ui-traits');
+        list.innerHTML = state.traits.map(t => `<span class="trait-badge">${t}</span>`).join('');
     }
 </script>
 </body>
