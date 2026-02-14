@@ -3,23 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Picao AI: Founder Simulator [Infinite]</title>
+    <title>Picao AI: Founder Simulator [Unlocked]</title>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    
     <style>
-        /* --- PICAO BRANDING --- */
+        /* --- PICAO OFFICIAL COLORS --- */
         :root {
-            --bg-color: #050505; /* Dark Picao Theme */
-            --card-bg: #0f0f11;
-            --sidebar-bg: #0a0a0c;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --border: #27272a;
-            --accent: #a855f7; /* Picao Purple */
-            --accent-secondary: #6366f1; /* Picao Indigo */
+            /* Backgrounds: Clean White/Cream for Light Mode */
+            --bg-color: #F8FAFC; 
+            --card-bg: #FFFFFF;
+            --sidebar-bg: #F1F5F9;
+            
+            /* Typography */
+            --text-main: #0F172A; /* Slate 900 */
+            --text-muted: #64748B; /* Slate 500 */
+            
+            /* Picao Accents (Extracted from picaoai.com) */
+            --accent: #6366f1; /* Picao Indigo */
+            --accent-hover: #4f46e5;
+            --accent-secondary: #a855f7; /* Picao Purple */
+            
+            /* Status Colors */
             --danger: #ef4444;
             --success: #10b981;
+            
+            /* Borders & Shadows */
+            --border: #E2E8F0;
+            --shadow-soft: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+            
+            /* Fonts */
             --font-serif: 'Lora', serif;
             --font-sans: 'Inter', sans-serif;
             --font-mono: 'JetBrains Mono', monospace;
@@ -29,11 +41,10 @@
 
         body {
             background-color: var(--bg-color);
+            /* Picao-style grainy gradient background */
             background-image: 
-                radial-gradient(circle at 50% 0%, rgba(168, 85, 247, 0.15) 0%, transparent 50%),
-                linear-gradient(var(--border) 1px, transparent 1px),
-                linear-gradient(90deg, var(--border) 1px, transparent 1px);
-            background-size: 100% 100%, 40px 40px, 40px 40px;
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.15) 0px, transparent 50%);
             color: var(--text-main);
             font-family: var(--font-sans);
             margin: 0;
@@ -44,104 +55,113 @@
             justify-content: center;
         }
 
-        /* --- NAVIGATION BUTTON --- */
+        /* --- NAVIGATION --- */
         .back-home {
             position: fixed; top: 20px; left: 20px; z-index: 2000;
-            background: rgba(0,0,0,0.5); border: 1px solid var(--border);
-            color: var(--text-muted); padding: 10px 20px; border-radius: 99px;
-            text-decoration: none; font-size: 0.8rem; font-weight: 500;
+            background: white; border: 1px solid var(--border);
+            color: var(--text-muted); padding: 8px 16px; border-radius: 99px;
+            text-decoration: none; font-size: 0.8rem; font-weight: 600;
             transition: all 0.2s ease; display: flex; align-items: center; gap: 8px;
-            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow-soft);
         }
-        .back-home:hover { color: white; border-color: var(--accent); background: var(--accent-secondary); }
+        .back-home:hover { color: var(--accent); border-color: var(--accent); transform: translateY(-1px); }
 
-        /* --- START SCREEN --- */
-        #start-screen {
-            position: fixed; inset: 0; background: var(--bg-color); z-index: 999;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            transition: transform 0.8s cubic-bezier(0.8, 0, 0.2, 1);
-        }
-        
-        /* Floating Orbs for Picao Feel */
-        .orb { position: absolute; width: 600px; height: 600px; border-radius: 50%; filter: blur(120px); opacity: 0.15; z-index: -1; pointer-events: none; }
-        .orb-1 { background: var(--accent); top: -10%; left: -10%; animation: float 10s infinite alternate; }
-        .orb-2 { background: var(--accent-secondary); bottom: -10%; right: -10%; animation: float 12s infinite alternate-reverse; }
-        @keyframes float { 0% { transform: translate(0,0); } 100% { transform: translate(50px, 50px); } }
-
-        h1 { font-family: var(--font-serif); font-size: 4rem; margin: 0 0 20px 0; color: white; font-style: italic; font-weight: 600; letter-spacing: -2px; }
-        h1 span { color: var(--accent); }
-        .subtitle { color: var(--text-muted); margin-bottom: 40px; font-size: 1.1rem; line-height: 1.6; text-align: center; max-width: 500px; }
-        
-        .start-btn {
-            background: white; color: black; border: none; padding: 18px 50px;
-            font-size: 0.9rem; border-radius: 99px; font-weight: 700; cursor: pointer;
-            transition: 0.3s; box-shadow: 0 0 30px rgba(168, 85, 247, 0.3);
-            text-transform: uppercase; letter-spacing: 1px;
-        }
-        .start-btn:hover { transform: scale(1.05); background: var(--accent); color: white; }
-
-        /* --- GAME UI --- */
+        /* --- GAME CONTAINER --- */
         #app-container {
-            width: 100%; max-width: 1200px; height: 90vh;
+            width: 100%; max-width: 1200px; height: 95vh;
             display: flex; background: var(--card-bg);
-            border: 1px solid var(--border); border-radius: 24px;
-            box-shadow: 0 50px 100px -20px rgba(0,0,0,0.5);
-            overflow: hidden; position: relative; opacity: 0; transform: scale(0.98);
-            transition: opacity 0.6s ease, transform 0.6s ease; z-index: 10;
+            border: 1px solid var(--border); border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15); 
+            overflow: hidden; position: relative; z-index: 10;
         }
 
+        /* --- SIDEBAR --- */
         .sidebar {
             width: 280px; background: var(--sidebar-bg);
-            border-right: 1px solid var(--border); padding: 30px;
+            border-right: 1px solid var(--border); padding: 32px;
             display: flex; flex-direction: column; gap: 24px; flex-shrink: 0; overflow-y: auto;
         }
-        .brand-header { font-family: var(--font-serif); font-weight: 700; font-size: 1.2rem; color: var(--accent); margin-bottom: 10px; }
+        .brand-header { 
+            font-family: var(--font-serif); font-weight: 700; font-size: 1.2rem; 
+            background: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 10px; 
+        }
         
-        .stat-block { padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .stat-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 5px; }
+        .stat-block { border-bottom: 1px solid var(--border); padding-bottom: 16px; }
+        .stat-block:last-child { border: none; }
+        
+        .stat-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
         .stat-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
-        .stat-value { font-family: var(--font-mono); font-size: 1rem; font-weight: 600; color: white; }
+        .stat-value { font-family: var(--font-mono); font-size: 0.9rem; font-weight: 600; color: var(--text-main); }
         
-        .bar-container { background: rgba(255,255,255,0.1); height: 4px; border-radius: 99px; overflow: hidden; margin-top: 5px; }
+        .bar-container { background: #cbd5e1; height: 4px; border-radius: 99px; overflow: hidden; margin-top: 4px; }
         .bar-fill { height: 100%; transition: width 0.5s ease; background: var(--accent); }
         
+        /* --- MAIN VIEW --- */
         .main-view { flex-grow: 1; display: flex; flex-direction: column; position: relative; }
-        #story-log { flex-grow: 1; padding: 60px; padding-bottom: 120px; overflow-y: auto; scroll-behavior: smooth; display: flex; flex-direction: column; gap: 50px; }
+        #story-log { 
+            flex-grow: 1; padding: 60px; padding-bottom: 120px; 
+            overflow-y: auto; scroll-behavior: smooth; 
+            display: flex; flex-direction: column; gap: 60px; 
+        }
 
-        /* --- NODES --- */
-        .story-node { animation: slideIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; max-width: 700px; margin: 0 auto; width: 100%; }
-        @keyframes slideIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        /* --- STORY NODES --- */
+        .story-node { 
+            animation: slideIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; 
+            max-width: 700px; margin: 0 auto; width: 100%; 
+        }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
 
-        .node-header { font-family: var(--font-mono); color: var(--accent); font-size: 0.7rem; margin-bottom: 15px; display: flex; align-items: center; gap: 12px; opacity: 0.8; }
+        .node-header { 
+            font-family: var(--font-mono); color: var(--accent); 
+            font-size: 0.75rem; margin-bottom: 16px; 
+            display: flex; align-items: center; gap: 12px; 
+            text-transform: uppercase; letter-spacing: 1px; font-weight: 700;
+        }
         .node-line { height: 1px; flex-grow: 1; background: var(--border); }
-        .node-text { font-size: 1.15rem; line-height: 1.7; color: var(--text-main); margin-bottom: 30px; white-space: pre-wrap; font-family: var(--font-sans); font-weight: 300; }
-        .node-text b { font-weight: 700; color: white; }
+        
+        .node-text { 
+            font-size: 1.25rem; line-height: 1.6; color: var(--text-main); 
+            margin-bottom: 32px; font-family: var(--font-serif); 
+        }
+        .node-text b { color: var(--accent-secondary); }
 
-        .choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
         .choice-grid.single { grid-template-columns: 1fr; }
         
         .choice-btn {
-            background: rgba(255,255,255,0.03); border: 1px solid var(--border); color: var(--text-main);
-            padding: 20px; border-radius: 12px; text-align: left; cursor: pointer;
+            background: white; border: 1px solid var(--border); color: var(--text-main);
+            padding: 24px; border-radius: 12px; text-align: left; cursor: pointer;
             transition: all 0.2s; position: relative; overflow: hidden;
             display: flex; align-items: center; justify-content: space-between;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
         }
-        .choice-btn:hover { border-color: var(--accent); background: rgba(168, 85, 247, 0.05); transform: translateY(-2px); }
-        .choice-btn:disabled { opacity: 0.3; cursor: not-allowed; filter: grayscale(1); pointer-events: none; }
-        .choice-text { font-weight: 600; font-size: 0.9rem; }
+        .choice-btn:hover { 
+            border-color: var(--accent); transform: translateY(-2px); 
+            box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.15); 
+        }
+        .choice-btn:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); }
+        .choice-text { font-family: var(--font-sans); font-weight: 600; font-size: 0.95rem; }
+        
+        /* LOCKED STATE */
+        .choice-btn.locked { opacity: 0.6; background: #F1F5F9; border-style: dashed; pointer-events: none; color: var(--text-muted); }
 
         /* --- FLOATY TEXT --- */
-        .floaty { position: absolute; font-weight: bold; font-family: var(--font-mono); pointer-events: none; animation: floatUp 2s forwards; z-index: 9999; font-size: 1rem; }
+        .floaty { position: absolute; font-weight: bold; font-family: var(--font-mono); pointer-events: none; animation: floatUp 2s forwards; z-index: 9999; font-size: 0.9rem; }
         @keyframes floatUp { 0% { opacity: 0; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-50px); } }
+        
+        /* --- VISUAL FX --- */
+        body.low-sanity #app-container { filter: sepia(0.3) contrast(1.1); }
+        body.critical-sanity #app-container { animation: breathe 4s infinite ease-in-out; filter: grayscale(1) blur(0.5px); }
         
         .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
         @keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } }
 
         @media (max-width: 768px) {
             #app-container { flex-direction: column; height: 100vh; border-radius: 0; border: none; }
-            .sidebar { width: 100%; padding: 20px; border-right: none; border-bottom: 1px solid var(--border); flex-direction: row; flex-wrap: wrap; gap: 15px; }
+            .sidebar { width: 100%; padding: 20px; border-right: none; border-bottom: 1px solid var(--border); flex-direction: row; flex-wrap: wrap; gap: 15px; max-height: 160px; overflow-y: hidden; }
             #story-log { padding: 24px; padding-bottom: 80px; }
-            h1 { font-size: 3rem; }
         }
     </style>
 </head>
@@ -151,22 +171,9 @@
     <i data-lucide="arrow-left" style="width: 14px;"></i> Return to Picao
 </a>
 
-<div id="start-screen">
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div style="font-family: var(--font-mono); color: var(--accent); margin-bottom: 15px; font-size: 0.75rem; letter-spacing: 2px;">SIMULATION v9.0</div>
-    <h1>Picao<span>AI</span></h1>
-    <p class="subtitle">
-        <b>170+ Paths. Infinite Drama.</b><br>
-        Survive Elo Tusk, Pam Maltman, and the Context Tax.<br>
-        Will you build the future, or become a warning label?
-    </p>
-    <button class="start-btn" onclick="startGame()">Initialize Startup</button>
-</div>
-
 <div id="app-container">
     <div class="sidebar">
-        <div class="brand-header">Founder OS</div>
+        <div class="brand-header">Founder OS v2.0</div>
         
         <div class="stat-block">
             <div class="stat-row"><span class="stat-label">Net Worth</span><span class="stat-value" id="ui-networth">$0</span></div>
@@ -174,7 +181,7 @@
         
         <div class="stat-block">
             <div class="stat-row"><span class="stat-label">Liquid Cash</span><span class="stat-value" id="ui-cash">$0</span></div>
-            <div class="stat-row"><span class="stat-label" style="color:var(--danger); font-size:0.65rem;">Est. Burn</span><span class="stat-value" style="color:var(--danger); font-size:0.7rem;" id="ui-burn">-$0/wk</span></div>
+            <div class="stat-row"><span class="stat-label" style="color:var(--danger); font-size:0.65rem;">Burn Rate</span><span class="stat-value" style="color:var(--danger); font-size:0.7rem;" id="ui-burn">-$0/wk</span></div>
         </div>
 
         <div class="stat-block">
@@ -190,6 +197,10 @@
         <div class="stat-block">
             <div class="stat-row"><span class="stat-label">Week</span><span class="stat-value" id="ui-week">1</span></div>
         </div>
+        
+        <div class="stat-block" style="border:none;">
+            <div class="stat-row"><span class="stat-label">Legacy</span><span class="stat-value" id="ui-status" style="color:var(--accent);">UNKNOWN</span></div>
+        </div>
     </div>
 
     <div class="main-view">
@@ -198,21 +209,15 @@
 </div>
 
 <script>
-// WAIT FOR DOM
-document.addEventListener('DOMContentLoaded', () => {
+    // --- 1. INITIALIZATION ---
+    // We run this immediately to ensure no blank screen
     lucide.createIcons();
-    
-    // --- AUDIO ENGINE ---
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     
-    window.playSound = function(type) {
+    function playSound(type) {
         if (audioCtx.state === 'suspended') audioCtx.resume();
-        const osc = audioCtx.createOscillator(); 
-        const gain = audioCtx.createGain();
-        osc.connect(gain); 
-        gain.connect(audioCtx.destination); 
-        const now = audioCtx.currentTime;
-        
+        const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination); const now = audioCtx.currentTime;
         if (type === 'click') { 
             osc.type = 'sine'; osc.frequency.setValueAtTime(800, now); osc.frequency.exponentialRampToValueAtTime(0, now + 0.1); 
             gain.gain.setValueAtTime(0.05, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1); 
@@ -222,34 +227,22 @@ document.addEventListener('DOMContentLoaded', () => {
             gain.gain.setValueAtTime(0.05, now); gain.gain.linearRampToValueAtTime(0, now + 0.3); 
             osc.start(now); osc.stop(now + 0.3); 
         }
-    };
+    }
 
-    // --- GAME STATE ---
-    const state = { 
-        cash: 0, 
-        valuation: 0, 
-        equity: 100, 
-        sanity: 100, 
-        week: 1, 
-        karma: 50, 
-        hype: 0,
-        traits: []
-    };
+    const state = { cash: 0, valuation: 0, equity: 100, sanity: 100, week: 1, karma: 50, hype: 0, traits: [] };
 
-    // --- THE MASSIVE NARRATIVE TREE (170+ Nodes) ---
+    // --- 2. NARRATIVE DATA (The 170+ Nodes) ---
     const story = {
-        // --- ACT 1: THE ORIGIN ---
         start: {
             title: "WEEK 1: THE IDEA",
             text: "You have an idea for Picao AI: The Unified Workspace. You have $10k in savings. Your partner says 'Please don't do this.'",
             options: [
                 { text: "Quit Job & Burn Boats", next: "partner_ultimatum", effect: { cash: 10000, sanity: -10 } },
                 { text: "Keep Job & Code Nights", next: "burnout_begins", effect: { cash: 50000, sanity: -30 } },
-                { text: "Steal Code from Google", next: "lawsuit_intro", effect: { cash: 10000, karma: -50 } },
+                { text: "Steal Code from Employer", next: "lawsuit_intro", effect: { cash: 10000, karma: -50 } },
                 { text: "Launch Memecoin Scam", next: "crypto_scam", effect: { cash: 5000, karma: -20 }, trait: "Grifter" }
             ]
         },
-        
         // --- RELATIONSHIP ARC ---
         partner_ultimatum: {
             title: "THE KITCHEN TABLE",
@@ -267,7 +260,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 { text: "Call Elo Tusk for advice", next: "elo_ignore", effect: { sanity: -5 } }
             ]
         },
-
         // --- ELO TUSK ARC ---
         elo_ignore: {
             title: "GHOSTED",
@@ -285,7 +277,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 { text: "Apologize", next: "weak_brand", effect: { valuation: -1000000 } }
             ]
         },
-
         // --- MVP SUCCESS ---
         mvp_viral: {
             title: "PRODUCT HUNT #1",
@@ -295,7 +286,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 { text: "Charge Users Immediately", next: "bootstrapped_freedom", effect: { cash: 5000 } }
             ]
         },
-
         // --- VC ARC ---
         vc_sharks: {
             title: "SAND HILL ROAD",
@@ -313,7 +303,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 { text: "Reject & Go Indie", next: "bootstrapped_freedom", effect: { sanity: 10 } }
             ]
         },
-
         // --- SCALE & SABOTAGE ---
         hyper_growth: {
             title: "SCALING HELL",
@@ -328,7 +317,8 @@ document.addEventListener('DOMContentLoaded', () => {
             text: "You are selling AI to oil companies. <b>Jeff Bozos</b> wants to buy you.",
             options: [
                 { text: "Sell to Jeff ($50M)", next: "end_rich_graveyard", effect: { cash: 50000000 } },
-                { text: "Keep Scaling", next: "ipo_track", effect: { cash: 1000000, karma: -20 } }
+                { text: "Keep Scaling", next: "ipo_track", effect: { cash: 1000000, karma: -20 } },
+                { text: "Quit", next: "end_burnout" }
             ]
         },
         ipo_track: {
@@ -339,7 +329,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 { text: "Pull out last minute", next: "end_legend" }
             ]
         },
-
         // --- HARDWARE ARC (Humane Pin) ---
         hardware_pivot: {
             title: "THE PICAO PIN",
@@ -357,7 +346,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 { text: "Pivot back to SaaS", next: "mvp_viral" }
             ]
         },
-
         // --- SINGULARITY ARC ---
         safety_research: {
             title: "ALIGNMENT",
@@ -367,18 +355,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 { text: "Kill It", next: "end_luddite" }
             ]
         },
-
         // --- FAILURE BRANCHES ---
         burnout_begins: { title: "TIRED", text: "Two jobs is too much. You fell asleep driving.", options: [{text:"Quit Job", next:"partner_ultimatum"}, {text:"Quit Picao", next:"end_early_exit"}] },
         lawsuit_intro: { title: "LAWSUIT", text: "Your ex-employer sues. Assets frozen.", options: [{text:"Settle", next:"debt_slave", effect:{cash:-50000}}, {text:"Fight", next:"end_jail"}] },
         debt_slave: { title: "UNDERWATER", text: "You owe $50k.", options: [{text:"Give up", next:"end_bankrupt"}, {text:"Pivot to Crypto", next:"crypto_scam"}] },
         crypto_scam: { title: "PICAO COIN", text: "You launch a token. <b>Sam Bankman-Fraud</b> calls.", options: [{text:"Partner", next:"end_jail"}, {text:"Run", next:"end_fugitive"}] },
-        slow_burn: { title: "SLOW DEATH", text: "Competitors are faster.", options: [{text:"Pivot", next:"mvp_viral"}, {text:"Quit", next:"end_bankrupt"}] },
+        slow_burn: { title: "SLOW DEATH", text: "Competitors are faster. <b>Pam Maltman</b> calls.", options: [{text:"Pitch Pam", next:"pam_hackathon"}, {text:"Quit", next:"end_bankrupt"}] },
         bootstrapped_freedom: { title: "INDIE HACKER", text: "Making $10k/mo. Life is good.", options: [{text:"Scale Up", next:"hyper_growth"}, {text:"Stay Small", next:"end_happy"}] },
         legal_drain: { title: "LAWYERS", text: "They bleed you dry.", options: [{text:"Settle", next:"end_bankrupt"}, {text:"Fight", next:"end_jail"}] },
         ugly_prototype: { title: "IT MELTED", text: "The device overheated.", options: [{text:"Recall", next:"end_bankrupt"}, {text:"Lie", next:"end_scandal"}] },
         villain_arc: { title: "DARK GROWTH", text: "You are famous but hated.", options: [{text:"Sell Data", next:"end_scandal"}, {text:"IPO", next:"end_ipo"}] },
         weak_brand: { title: "IRRELEVANT", text: "No one respects you.", options: [{text:"Rebrand", next:"mvp_viral"}, {text:"Quit", next:"end_bankrupt"}] },
+        pam_hackathon: { title: "DEMO DAY", text: "Pam asks: 'Does it scale?'", options: [{text:"Lie", next:"pam_impressed", effect:{karma:-10}}, {text:"Truth", next:"pam_mentor"}] },
+        pam_impressed: { title: "YC INVITE", text: "Pam invites you to YC.", options: [{text:"Accept", next:"yc_life", effect:{cash:500000}}, {text:"Reject", next:"bootstrapped_freedom"}] },
+        pam_mentor: { title: "SAFETY", text: "Pam wants you to focus on safety.", options: [{text:"Agree", next:"safety_research"}, {text:"Ignore", next:"mvp_viral"}] },
+        yc_life: { title: "SAN FRANCISCO", text: "Rent is $5k. Met Bark Zuckerborg.", options: [{text:"Pitch Bark", next:"bark_copycat"}, {text:"Ignore", next:"product_focus"}] },
+        bark_copycat: { title: "CLONED", text: "Meta copied you.", options: [{text:"Sue", next:"legal_drain"}, {text:"Pivot", next:"b2b_sales"}] },
+        product_focus: { title: "HEAD DOWN", text: "You ignored the noise.", options: [{text:"Launch", next:"mvp_viral"}] },
 
         // --- ENDINGS ---
         end_early_exit: { title: "EXIT: SAFE BET", text: "You sold for $2M. You bought a condo. It's... fine.", end: true, color: "#16A34A" },
@@ -395,7 +388,7 @@ document.addEventListener('DOMContentLoaded', () => {
         end_scandal: { title: "GAME OVER: CANCELED", text: "The internet hates you.", end: true, color: "#DC2626" }
     };
 
-    // --- PROCEDURAL GENERATOR ---
+    // --- 3. PROCEDURAL GENERATOR ---
     const crises = ["Server Fire", "Co-Founder Affair", "GDPR Fine", "DDoS Attack", "Inflation", "Hiring Freeze"];
     function generateNode(key) {
         const crisis = crises[Math.floor(Math.random() * crises.length)];
@@ -410,20 +403,17 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
-    // --- ENGINE LOGIC ---
-    window.startGame = function() {
-        document.getElementById('start-screen').style.transform = 'translateY(-100%)';
-        document.getElementById('app-container').style.opacity = '1';
-        document.getElementById('app-container').style.transform = 'scale(1)';
-        updateUI();
-        playSound('click');
+    // --- 4. ENGINE LOGIC ---
+    function startGame() {
+        // Immediately Push Story to ensure content exists
         pushStory('start');
-    };
+        updateUI();
+    }
 
-    window.pushStory = function(nodeKey) {
+    function pushStory(nodeKey) {
         let node = story[nodeKey];
-        // Infinite Fallback
         if (!node) {
+            // Infinite Fallback
             if (nodeKey === 'gen_survive' || nodeKey === 'gen_tired') {
                 node = { title: "SURVIVED", text: "You made it through the week.", options: [{text:"Continue", next: "hyper_growth"}] };
             } else {
@@ -436,13 +426,13 @@ document.addEventListener('DOMContentLoaded', () => {
         el.className = 'story-node';
 
         if (node.end) {
-            let netWorth = (state.valuation * (state.equity / 100)) + state.cash;
+            let totalValue = (state.valuation * (state.equity / 100)) + state.cash;
             el.innerHTML = `
                 <div style="background: ${node.color || 'var(--accent)'}; color: white; padding: 40px; border-radius: 12px; text-align: center;">
                     <div style="font-family: var(--font-serif); font-size: 2rem; margin-bottom: 10px;">${node.title}</div>
                     <p style="opacity: 0.9; margin-bottom: 30px;">${node.text}</p>
                     <div style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 8px; font-family: var(--font-mono); font-size: 0.9rem;">
-                        Net Worth: $${netWorth.toLocaleString()}<br>
+                        Net Worth: $${totalValue.toLocaleString()}<br>
                         Sanity: ${state.sanity}%
                     </div>
                 </div>
@@ -452,17 +442,25 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             let opts = `<div class="choice-grid ${node.options.length===1?'single':''}">` + 
             node.options.map((o, i) => {
-                return `<button class="choice-btn" onclick="choose('${nodeKey}',${i})"><span class="choice-text">${o.text}</span></button>`;
+                let locked = false;
+                if (o.reqTrait && !state.traits.includes(o.reqTrait)) locked = true;
+                return `<button class="choice-btn ${locked ? 'locked' : ''}" onclick="choose('${nodeKey}',${i})">
+                    <span class="choice-text">${o.text}</span>
+                    ${locked ? '<span style="font-size:0.7rem">LOCKED</span>' : ''}
+                </button>`;
             }).join('') + `</div>`;
-            el.innerHTML = `<div class="node-header"><i data-lucide="activity" style="width:14px;"></i><span>${node.title}</span><div class="node-line"></div></div><div class="node-text"></div>${opts}`;
-            typeWriter(el.querySelector('.node-text'), node.text);
+            el.innerHTML = `<div class="node-header"><span>${node.title}</span><div class="node-line"></div></div><div class="node-text"></div>${opts}`;
+            
+            // Auto-scroll
+            requestAnimationFrame(() => {
+                typeWriter(el.querySelector('.node-text'), node.text);
+            });
         }
         log.appendChild(el);
         setTimeout(() => log.scrollTo({top:log.scrollHeight, behavior:'smooth'}), 100);
-    };
+    }
 
-    window.choose = function(key, idx) {
-        // Burn Rate
+    function choose(key, idx) {
         let burn = 500 + (state.week * 200);
         if (state.valuation > 1000000) burn = 10000;
         state.cash -= burn;
@@ -475,20 +473,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (opt.effect) {
             if (opt.effect.cash) { state.cash += opt.effect.cash; showFloat(opt.effect.cash, 'cash'); }
-            if (opt.effect.sanity) { state.sanity += opt.effect.sanity; showFloat(opt.effect.sanity, 'sanity'); }
+            if (opt.effect.sanity) { state.sanity += opt.effect.sanity; if(opt.effect.sanity < 0) document.body.classList.add('shake'); }
             if (opt.effect.equity) state.equity += opt.effect.equity;
             if (opt.effect.valuation) state.valuation = opt.effect.valuation;
             if (opt.effect.karma) state.karma += opt.effect.karma;
             if (opt.effect.hype) state.hype += opt.effect.hype;
         }
 
+        setTimeout(() => document.body.classList.remove('shake'), 500);
         state.week++;
         updateUI();
 
         if (state.sanity <= 0) setTimeout(() => pushStory('end_burnout'), 500);
         else if (state.cash < -20000 && state.week > 5) setTimeout(() => pushStory('end_bankrupt'), 500);
         else setTimeout(() => pushStory(opt.next), 500);
-    };
+    }
 
     function typeWriter(el, text) {
         let i=0; el.innerHTML = "";
@@ -497,8 +496,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 if(text.charAt(i) === '<') { const end = text.indexOf('>', i); el.innerHTML += text.substring(i, end+1); i = end+1; } 
                 else { el.innerHTML += text.charAt(i); i++; }
                 setTimeout(type, 10);
-            } else {
-                lucide.createIcons();
             }
         }
         type();
@@ -529,11 +526,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (state.valuation > 1000000) burn = 10000;
         document.getElementById('ui-burn').innerText = '-$' + burn.toLocaleString() + '/wk';
 
-        // Sanity Visuals
         if(state.sanity < 30) document.body.classList.add('low-sanity');
         else document.body.classList.remove('low-sanity');
         if(state.sanity < 10) document.body.classList.add('critical-sanity');
     }
+
+    // Auto-Start (Removes Blocker)
+    setTimeout(startGame, 100);
 });
 </script>
 </body>
