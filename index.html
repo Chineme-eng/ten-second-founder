@@ -164,7 +164,7 @@
     <div class="orb orb-1"></div>
     <div class="orb orb-2"></div>
     <div class="logo-box">
-        <div style="font-family: var(--font-mono); color: var(--accent); margin-bottom: 15px; font-size: 0.75rem; letter-spacing: 2px;">SIMULATION v5.2 // ULTIMATE</div>
+        <div style="font-family: var(--font-mono); color: var(--accent); margin-bottom: 15px; font-size: 0.75rem; letter-spacing: 2px;">SIMULATION v5.3 // ULTIMATE</div>
         <h1>Picao<span>AI</span></h1>
         <p class="subtitle">
             <b>150+ Nodes. 50 Endings. No Dead Ends.</b><br>
@@ -266,7 +266,7 @@
             title: "WEEK 1: THE IDEA",
             text: "The world is fragmented. Picao AI will fix it. Where do you start?",
             options: [
-                { text: "Drop Out of Stanford", meta: "High Hype • High Debt", next: "path_stanford", effect: { hype: 20, cash: -50000 }, trait: "Dropout" },
+                { text: "Drop Out of Stanford", meta: "High Hype • High Debt", next: "path_stanford", effect: { hype: 20, cash: -40000 }, trait: "Dropout" },
                 { text: "Quit Google PM Job", meta: "Safe • Boring", next: "path_corp", effect: { cash: 100000, sanity: -10, tech: 5 }, trait: "Ex-Googler" },
                 { text: "Use Picao Platform", meta: "Ideate & Launch", next: "path_indie", effect: { sanity: 5, tech: 10 }, trait: "Picao User" },
                 { text: "Steal Code from Employer", meta: "High Risk • Fast Start", next: "lawsuit_start", effect: { tech: 50, karma: -50 }, trait: "Thief" }
@@ -319,10 +319,10 @@
         },
         pam_hackathon: {
             title: "JUDGEMENT DAY",
-            text: "Pam asks: 'Does it scale?'",
+            text: "Pam Maltman asks: 'How did you build this so fast?'",
             options: [
-                { text: "Yes (Lie)", meta: "Fake it", next: "pam_impressed", effect: { hype: 20, karma: -10 } },
-                { text: "No (Honesty)", meta: "Truth", next: "pam_mentor", effect: { tech: 10 } }
+                { text: "I used Picao", meta: "Truth", next: "pam_impressed", effect: { hype: 20, tech: 10 }, trait: "Picao User" },
+                { text: "I'm a Genius", meta: "Lie", next: "pam_mentor", effect: { karma: -10 } }
             ]
         },
         pam_impressed: {
@@ -483,11 +483,11 @@
         // --- EXIT SCENARIOS ---
         acquisition_offer: {
             title: "THE EXIT",
-            text: "Microsoft ($500M) vs Google ($400M).",
+            text: "The giants are circling. Who do you sell to?",
             options: [
-                { text: "Sell to Satya", next: "end_rich", effect: { valuation: 500000000 } },
-                { text: "Sell to Google", next: "end_rich_graveyard", effect: { valuation: 400000000 } },
-                { text: "IPO", next: "end_ipo", effect: { valuation: 20000000000 } }
+                { text: "Sell to Satya", meta: "$500M", next: "end_rich", effect: { valuation: 500000000 } },
+                { text: "Sell to Elo Tusk", meta: "Unstable", next: "end_musk_pet", effect: { valuation: 100000000 } },
+                { text: "IPO", meta: "Go Public", next: "end_ipo", effect: { valuation: 20000000000 } }
             ]
         },
 
@@ -500,20 +500,49 @@
         end_bankrupt: { title: "GAME OVER: $0", text: "You burned all the cash. Game over.", end: true, color: "var(--danger)" },
         end_burnout: { title: "GAME OVER: BURNOUT", text: "You collapsed at your desk. The doctor ordered 6 months of no screens.", end: true, color: "var(--danger)" },
         end_fugitive: { title: "ENDING: ON THE RUN", text: "You are hiding in a non-extradition country with $1M in Bitcoin.", end: true, color: "var(--warning)" },
-        end_musk_pet: { title: "ENDING: X EMPLOYEE", text: "Elon bought your company. You sleep on the floor at HQ.", end: true, color: "#000000" },
+        end_musk_pet: { title: "EXIT: X CORP MIDDLE MANAGER", text: "Elo bought Picao for cheap. You now sleep on the floor at HQ rewriting code for 'Grok 5'. You are tired.", end: true, color: "#14171A" },
         end_singularity: { title: "ENDING: POST-HUMAN", text: "The AI optimized humanity out of existence. You were first.", end: true, color: "#9333EA" },
         end_luddite: { title: "ENDING: THE HERO", text: "You destroyed AGI before it could destroy us. You work at a cafe now.", end: true, color: "#10B981" },
-        end_happy: { title: "ENDING: LIFESTYLE BIZ", text: "You kept it small. You are happy.", end: true, color: "#F472B6" },
+        end_happy: { title: "ENDING: LIFESTYLE KING", text: "You rejected the VC rat race. You make $50k/mo passively and surf every day.", end: true, color: "#F472B6" },
         
         // --- CONNECTORS & FALLBACKS ---
         bootstrap_hell: { title: "RAMEN PROFITABLE", text: "Making $5k/mo. Eating noodles.", options: [{text:"Scale", next:"saas_revenue"}, {text:"Give Up", next:"end_happy"}] },
-        saas_revenue: { title: "MRR GROWTH", text: "Hitting $50k MRR. VCs calling.", options: [{text:"Raise A", next:"series_a_term_sheet"}, {text:"Stay Indie", next:"end_happy"}] },
+        saas_revenue: { 
+            title: "MRR GROWTH", 
+            text: "You hit $50k MRR. Investors are sliding into your DMs.", 
+            options: [
+                { text: "Raise Series A", meta: "Scale Fast", next: "series_a_term_sheet", effect: { valuation: 10000000 } }, 
+                { text: "Stay Indie", meta: "Keep 100%", next: "end_happy", effect: { valuation: 3000000, cash: 100000 } }
+            ] 
+        },
         server_crash: { title: "REDDIT HUG", text: "Servers melted.", options: [{text:"Fix it", next:"saas_revenue"}, {text:"Panic", next:"end_bankrupt"}] },
         legal_drain: { title: "LAWYERS", text: "Bleeding cash.", options: [{text:"Settle", next:"end_bankrupt"}, {text:"Fight", next:"end_jail"}] },
         twitter_viral: { title: "MAIN CHARACTER", text: "You are Twitter famous.", options: [{text:"Monetize", next:"saas_revenue"}, {text:"Say something offensive", next:"end_scandal"}] },
         b2b_sales: { title: "ENTERPRISE", text: "Selling to banks.", options: [{text:"Hire Sales", next:"acquisition_offer"}, {text:"Boring", next:"hardware_pivot"}] },
-        series_a_term_sheet: { title: "TERM SHEET", text: "Sequoia: $10M @ $50M val.", options: [{text:"Sign", next:"hyper_growth"}, {text:"Pass", next:"bootstrap_hell"}] },
-        hyper_growth: { title: "UNICORN", text: "Valuation $1B.", options: [{text:"IPO", next:"end_ipo", effect: { valuation: 20000000000 } }, {text:"Buy Ferrari", next:"end_bankrupt"}] },
+        series_a_term_sheet: { 
+            title: "THE TERM SHEET", 
+            text: "Sequoia offers $10M at $50M val. They want a board seat and 20% equity.", 
+            options: [
+                { text: "Sign the Deal", meta: "Dilution", next: "scaling_hell", effect: { cash: 10000000, equity: -20, valuation: 50000000 } }, 
+                { text: "Walk Away", meta: "Freedom", next: "bootstrap_hell", effect: { sanity: 10 } }
+            ] 
+        },
+        scaling_hell: {
+            title: "GROWTH PAINS",
+            text: "You have $10M but burn rate is insane. Engineering is fighting with Sales.",
+            options: [
+                { text: "Hire 'Adults'", meta: "Corporate", next: "acquisition_offer", effect: { sanity: -10, tech: -5 } },
+                { text: "Blitzscale", meta: "Burn Cash", next: "hyper_growth", effect: { cash: -5000000, hype: 30 } }
+            ]
+        },
+        hyper_growth: { 
+            title: "UNICORN STATUS", 
+            text: "You are featured on Forbes. Valuation hits $1B.", 
+            options: [
+                { text: "IPO", next: "end_ipo", effect: { valuation: 1000000000 } }, 
+                { text: "Buy Supercar", meta: "Dumb", next: "end_bankrupt", effect: { cash: -10000000 } }
+            ] 
+        },
         investor_anger: { title: "BOARD MEETING", text: "Investors are mad.", options: [{text:"Fire them", next:"end_scandal"}, {text:"Pivot", next:"hardware_pivot"}] },
         debt_spiral: { title: "DEBT", text: "You owe millions.", options: [{text:"Default", next:"end_bankrupt"}, {text:"Fraud", next:"sec_raid"}] },
         tech_breakthrough: { title: "EUREKA", text: "100x speed boost.", options: [{text:"Sell API", next:"acquisition_offer"}, {text:"Keep Secret", next:"end_luddite"}] },
